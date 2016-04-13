@@ -24,6 +24,7 @@ Manifest for scheduler
                        "eu.ownyourdata.scheduler.config:delete"]
 }
 '
+# install.packages(c('shiny', shinyBS', 'DT', 'tidyr', 'digest', 'RCurl', 'jsonlite', 'dplyr'), repos='https://cran.rstudio.com/')
 library(shiny)
 library(digest)
 library(tidyr)
@@ -254,23 +255,23 @@ shinyServer(function(input, output, session) {
                         url <- items_url(repo[['url']], 
                                          repo[['app_key']])
                         piaData <- read_items(repo, url)
-                        importData <- csv_import()
+                } else {
+                        piaData <- data.frame()
+                }
+                importData <- csv_import()
                         
-                        # merge both data sets
-                        piaData <- create_digest(piaData)
-                        importData <- create_digest(importData)
-                        data <- rbind(importData, piaData)
-                        dups <- duplicated(data$digest)
-                        data <- data[!dups, ]
+                # merge both data sets
+                piaData <- create_digest(piaData)
+                importData <- create_digest(importData)
+                data <- rbind(importData, piaData)
+                dups <- duplicated(data$digest)
+                data <- data[!dups, ]
                         
-                        # create return Value
-                        if(nrow(data) > 0) {
-                                data$dat <- as.POSIXct(data$date, 
-                                                       format='%Y-%m-%d')
-                                data[with(data, order(dat)),]
-                        } else {
-                                data.frame()
-                        }
+                # create return Value
+                if(nrow(data) > 0) {
+                        data$dat <- as.POSIXct(data$date, 
+                                               format='%Y-%m-%d')
+                        data[with(data, order(dat)),]
                 } else {
                         data.frame()
                 }
@@ -572,7 +573,7 @@ shinyServer(function(input, output, session) {
                 url <- items_url(sRepo[['url']], 
                                  sRepo[['app_key']])
                 parameters <- list(address=email,
-                                   conntent='upload bank csv',
+                                   content='upload bank csv',
                                    encrypt='false')
                 config <- list(repo=bRepo[['app_key']],
                                time='0 9 1 * *',
@@ -587,7 +588,7 @@ shinyServer(function(input, output, session) {
                 url <- items_url(sRepo[['url']], 
                                  sRepo[['app_key']])
                 parameters <- list(address=email,
-                                   conntent='upload bank csv',
+                                   content='upload bank csv',
                                    encrypt='false')
                 config <- list(repo=bRepo[['app_key']],
                                time='0 9 1 * *',
