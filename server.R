@@ -24,7 +24,7 @@ Manifest for scheduler
                        "eu.ownyourdata.scheduler.config:delete"]
 }
 '
-# install.packages(c('shiny', shinyBS', 'DT', 'tidyr', 'digest', 'RCurl', 'jsonlite', 'dplyr'), repos='https://cran.rstudio.com/')
+# install.packages(c('shiny', 'shinyBS', 'DT', 'tidyr', 'digest', 'RCurl', 'jsonlite', 'dplyr'), repos='https://cran.rstudio.com/')
 library(shiny)
 library(digest)
 library(tidyr)

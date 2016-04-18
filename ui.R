@@ -13,13 +13,6 @@ saved_scheduler_app_secret <- ""
 if(file.exists("schedulerCredentials.RData"))
         load("schedulerCredentials.RData")
 
-saved_mailer_address <- ""
-saved_mailer_port <- ""
-saved_mailer_user <- ""
-saved_mailer_password <- ""
-if(file.exists("mailConfig.RData"))
-        load("mailConfig.RData")
-
 shinyUI(fluidPage(
   titlePanel("Kontoentwicklung"),
   bsAlert("topAlert"),
@@ -87,10 +80,10 @@ shinyUI(fluidPage(
                                  hr(),
                                  h3('Email Konfiguration'),
                                  htmlOutput("mail_config"),
-                                 textInput('mailer_address', 'Mail Server:', saved_mailer_address),
-                                 numericInput('mailer_port', 'Port:', saved_mailer_port),
-                                 textInput('mailer_user', 'Benutzer:', saved_mailer_user),
-                                 passwordInput('mailer_password', 'Passwort', saved_mailer_password),
+                                 textInput('mailer_address', 'Mail Server:'),
+                                 numericInput('mailer_port', 'Port:', 0),
+                                 textInput('mailer_user', 'Benutzer:'),
+                                 passwordInput('mailer_password', 'Passwort'),
                                  h3('Benachrichtigung'),
                                  textInput('email', 'Emailadresse:'),
                                  htmlOutput("email_status"),
