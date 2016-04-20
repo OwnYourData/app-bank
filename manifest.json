@@ -1,0 +1,17 @@
+{
+  "name":"OwnYourData Bank App",
+  "identifier":"eu.ownyourdata.bank",
+  "type":"hosted",
+  "description":"Track your bank account",
+  "permissions":["eu.ownyourdata.bank:read",
+  				 "eu.ownyourdata.bank:write",
+                 "eu.ownyourdata.scheduler:read",
+                 "eu.ownyourdata.scheduler:write",
+                 "eu.ownyourdata.scheduler:update",
+                 "eu.ownyourdata.scheduler:delete",
+                 "eu.ownyourdata.scheduler.email_config:read",
+                 "eu.ownyourdata.scheduler.email_config:write",
+                 "eu.ownyourdata.scheduler.email_config:update",
+                 "eu.ownyourdata.scheduler.email_config:delete"],
+  "requires": ["eu.ownyourdata.shinyhost"]
+}
