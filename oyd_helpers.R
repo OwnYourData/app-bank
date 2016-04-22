@@ -86,7 +86,6 @@ writeRecord <- function(repo, url, record) {
 
 updateRecord <- function(repo, url, record, id) {
         headers <- defaultHeaders(repo[['token']])
-        save(repo, url, record, id, headers, file="tmpUpdate.RData")
         record$id <- as.numeric(id)
         data <- gsub("\\[|\\]", '', 
                      toJSON(record, auto_unbox = TRUE))
@@ -108,7 +107,6 @@ readItems <- function(repo, url) {
                         getURL(url_data,
                                .opts=list(httpheader = headers)),
                         error = function(e) { return(NA) })
-                save(response, file="tmpResponse.RData")
                 if (is.na(response)) {
                         data.frame()
                 } else {
