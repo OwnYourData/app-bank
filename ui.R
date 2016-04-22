@@ -1,6 +1,7 @@
 # Setup and config ========================================
 library(shiny)
 library(shinyBS) #https://ebailey78.github.io/shinyBS/index.html
+library(jsonlite)
 
 source("oyd_helpers.R")
 
