@@ -24,7 +24,8 @@ Es umfasst folgende Funktionen:
 ## Für Entwickler  
 
 Diese App wurde in [R](https://cran.r-project.org/) entwickelt und verwendet [Shiny](http://shiny.rstudio.com/). Zur Ausführung wird entweder das OwnYourData Shiny Service benötigt (siehe oben: Installation) oder es existiert ein bereits [installierter Shiny Server](https://github.com/rstudio/shiny-server/wiki/Building-Shiny-Server-from-Source). Wird ein eigener Shiny Server betrieben, kann in der PIA App-Liste mit "Register a new Plugin" das Manifest base64-encodiert hinzugefügt werden (angegeben am Beginn der Datei `server.R`) und in der App unter Konfiguration müssen die Parameter URL, App-Key und App-Secret selbst gesetzt werden.
-
+Zum Ausprobieren kann die App auf [Heroku](https://www.heroku.com/) deployed werden:  
+[![Deploy](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy)
 
 ## Verbessere die Kontoentwicklungs-App
 
