@@ -4,5 +4,5 @@
   "repository": "https://github.com/OwnYourData/app-bank",
   "keywords": ["ownyourdata", "konto", "bank"],
   "website": "https://www.ownyourdata.eu",
-  "buildpacks": [{ "url": "http://github.com/virtualstaticvoid/heroku-buildpack-r#cedar-14" }]
+  "buildpacks": [{ "url": "http://github.com/virtualstaticvoid/heroku-buildpack-r" }]
 }
