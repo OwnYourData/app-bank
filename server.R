@@ -389,13 +389,14 @@ shinyServer(function(input, output, session) {
                 piaSchedulerEmail <- getPiaSchedulerEmail(repo)
                 piaEmail <- ''
                 piaEmailId <- NA
-                if (length(piaSchedulerEmail) > 0) {
-                        piaEmail <- piaSchedulerEmail[['email']]
-                        piaEmailId <-  piaSchedulerEmail[['id']]
-                }
                 if (length(piaMailConfig) == 0) {
                         'no mail config'
                 } else {
+                        if (length(piaSchedulerEmail) > 0) {
+                                piaEmail <- piaSchedulerEmail[['email']]
+                                piaEmailId <-  piaSchedulerEmail[['id']]
+                        }
+                        save(piaMailConfig, piaSchedulerEmail, piaEmail, piaEmailId, file="tmpEmail.RData")
                         localEmail <- as.character(input$email)
                         if(validEmail(localEmail)) {
                                 if (localEmail == piaEmail) {

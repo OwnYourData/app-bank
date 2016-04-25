@@ -1,5 +1,5 @@
-# last update: 2016-04-19
-
+# last update: 2016-04-25
+ 
 # Accessing PIA ===========================================
 getPiaConnection <- function(appName){
         url <- ''
@@ -152,9 +152,14 @@ getPiaSchedulerEmail <- function(repo) {
         if(nrow(retVal) == 0) {
                 vector()
         } else {
-                retVal <- retVal[retVal$repo == repo[['app_key']], ]
-                c(id=retVal$id,
-                  email=retVal$parameters$address)
+                retVal <- retVal[retVal$repo == repo[['app_key']] & 
+                                 retVal$task == 'email', ]
+                if(nrow(retVal) > 0) {
+                        c(id=retVal$id,
+                          email=retVal$parameters$address)
+                } else {
+                        vector()
+                }
         }
 }
 
