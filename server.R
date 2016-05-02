@@ -1,3 +1,4 @@
+# OYD: Kontoentwicklung  - last update:2016-05-02
 # Manifest for bank app ===================================
 '
 encode with https://www.base64encode.org/
@@ -17,6 +18,7 @@ encode with https://www.base64encode.org/
                        "eu.ownyourdata.scheduler.email_config:update",
                        "eu.ownyourdata.scheduler.email_config:delete"]
 }
+ew0KICAgICAgICAibmFtZSI6IkJhbmsgQXBwIiwNCiAgICAgICAgImlkZW50aWZpZXIiOiJldS5vd255b3VyZGF0YS5iYW5rIiwNCiAgICAgICAgInR5cGUiOiJleHRlcm5hbCIsDQogICAgICAgICJkZXNjcmlwdGlvbiI6InZpc3VhbGl6ZSBkZXZlbG9wbWVudCBvZiB5b3VyIHNhdmluZ3MiLA0KICAgICAgICAicGVybWlzc2lvbnMiOlsiZXUub3dueW91cmRhdGEuYmFuazpyZWFkIiwNCiAgICAgICAgICAgICAgICAgICAgICAgImV1Lm93bnlvdXJkYXRhLmJhbms6d3JpdGUiLA0KICAgICAgICAgICAgICAgICAgICAgICAiZXUub3dueW91cmRhdGEuc2NoZWR1bGVyOnJlYWQiLA0KICAgICAgICAgICAgICAgICAgICAgICAiZXUub3dueW91cmRhdGEuc2NoZWR1bGVyOndyaXRlIiwNCiAgICAgICAgICAgICAgICAgICAgICAgImV1Lm93bnlvdXJkYXRhLnNjaGVkdWxlcjp1cGRhdGUiLA0KICAgICAgICAgICAgICAgICAgICAgICAiZXUub3dueW91cmRhdGEuc2NoZWR1bGVyOmRlbGV0ZSIsDQogICAgICAgICAgICAgICAgICAgICAgICJldS5vd255b3VyZGF0YS5zY2hlZHVsZXIuZW1haWxfY29uZmlnOnJlYWQiLA0KICAgICAgICAgICAgICAgICAgICAgICAiZXUub3dueW91cmRhdGEuc2NoZWR1bGVyLmVtYWlsX2NvbmZpZzp3cml0ZSIsDQogICAgICAgICAgICAgICAgICAgICAgICJldS5vd255b3VyZGF0YS5zY2hlZHVsZXIuZW1haWxfY29uZmlnOnVwZGF0ZSIsDQogICAgICAgICAgICAgICAgICAgICAgICJldS5vd255b3VyZGF0YS5zY2hlZHVsZXIuZW1haWxfY29uZmlnOmRlbGV0ZSJdDQp9DQo=
 '
 
 # Setup and config ========================================
@@ -94,7 +96,7 @@ shinyServer(function(input, output, session) {
                                                                  myData$Haben)))
                         myData$value <- myData$SollValue + myData$HabenValue                        
                         myData$date <- as.Date(as.POSIXct(myData$ValutaDatum, 
-                                                          format='%d.%m.%Y'))
+                                                          format='%d.%m.%y'))
                         myData[, c('date', 'description', 'id', 'value')]
                 })
         }
@@ -396,7 +398,6 @@ shinyServer(function(input, output, session) {
                                 piaEmail <- piaSchedulerEmail[['email']]
                                 piaEmailId <-  piaSchedulerEmail[['id']]
                         }
-                        save(piaMailConfig, piaSchedulerEmail, piaEmail, piaEmailId, file="tmpEmail.RData")
                         localEmail <- as.character(input$email)
                         if(validEmail(localEmail)) {
                                 if (localEmail == piaEmail) {
