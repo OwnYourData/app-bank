@@ -1,4 +1,4 @@
-# last update: 2016-04-25
+# last update: 2016-05-03
  
 # Accessing PIA ===========================================
 getPiaConnection <- function(appName){
@@ -15,6 +15,25 @@ getPiaConnection <- function(appName){
                 credentialStr <- readChar(credentialsFile, 
                                           file.info(credentialsFile)$size)
                 credentials <- fromJSON(credentialStr)
+        }
+
+        # drv <- dbDriver("PostgreSQL")
+        # con <- dbConnect(drv, 
+        #                  dbname = Sys.getenv('HEROKU_DBNAME'), 
+        #                  host = Sys.getenv('HEROKU_HOST'), 
+        #                  port=5432, 
+        #                  user = Sys.getenv('HEROKU_USER'), 
+        #                  password = Sys.getenv('HEROKU_PASSWORD'))
+        # pia_con <- dbGetQuery(con, "SELECT * FROM pia")
+
+        if((url == '') & (Sys.getenv('HEROKU_PIA_URL') != '')) {
+                url <- Sys.getenv('HEROKU_PIA_URL')
+        }
+        if((app_key == '') & (Sys.getenv('HEROKU_APP_KEY') != '')) {
+                app_key <- Sys.getenv('HEROKU_APP_KEY')
+        }
+        if((app_secret == '') & (Sys.getenv('HEROKU_APP_SECRET') != '')) {
+                app_secret <- Sys.getenv('HEROKU_APP_SECRET')
         }
         
         if(url == '')
@@ -37,7 +56,6 @@ getPiaConnection <- function(appName){
 }
 
 # Accessing a Repo ========================================
-
 defaultHeaders <- function(token) {
         c('Accept'        = '*/*',
           'Content-Type'  = 'application/json',
@@ -168,14 +186,28 @@ setSchedulerEmail <- function(session, email){
                         value=email)
 }
 
-writeSchedulerEmail <- function(repo, email, content, time){
-        parameters <- list(address=email,
-                           content=content,
-                           encrypt='false')
-        config <- list(repo=repo[['app_key']],
-                       time=time,
-                       task='email',
-                       parameters=parameters)
+writeSchedulerEmail <- function(repo, email, content, time, email_response){
+        if(missing(email_response)) {
+                parameters <- list(address=email,
+                                   content=content,
+                                   encrypt='false')
+                config <- list(repo=repo[['app_key']],
+                               time=time,
+                               task='email',
+                               parameters=parameters)
+        } else {
+                parameters <- list(address=email,
+                                   content=content,
+                                   repo_url=repo[['url']],
+                                   repo_key=repo[['app_key']],
+                                   repo_secret=repo[['app_secret']],
+                                   encrypt='false')
+                config <- list(repo=repo[['app_key']],
+                               time=time,
+                               task='email',
+                               email_response = TRUE,
+                               parameters=parameters)
+        }
         writeRecord(repo, 
                     itemsUrl(repo[['url']], schedulerKey()), 
                     config)
