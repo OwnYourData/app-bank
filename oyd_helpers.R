@@ -1,4 +1,4 @@
-# last update: 2016-05-03
+# last update: 2016-05-14
  
 # Accessing PIA ===========================================
 getPiaConnection <- function(appName){
@@ -92,7 +92,7 @@ getRepo <- function(url, key, secret) {
 
 writeRecord <- function(repo, url, record) {
         headers <- defaultHeaders(repo[['token']])
-        data <- gsub("\\[|\\]", '', 
+        data <- gsub("^\\[|\\]$", '', 
                      toJSON(record, auto_unbox = TRUE))
         response <- tryCatch(
                 postForm(url,
@@ -186,8 +186,8 @@ setSchedulerEmail <- function(session, email){
                         value=email)
 }
 
-writeSchedulerEmail <- function(repo, email, content, time, email_response){
-        if(missing(email_response)) {
+writeSchedulerEmail <- function(repo, email, content, time, response_structure){
+        if(missing(response_structure)) {
                 parameters <- list(address=email,
                                    content=content,
                                    encrypt='false')
@@ -198,6 +198,7 @@ writeSchedulerEmail <- function(repo, email, content, time, email_response){
         } else {
                 parameters <- list(address=email,
                                    content=content,
+                                   response_structure=response_structure,
                                    repo_url=repo[['url']],
                                    repo_key=repo[['app_key']],
                                    repo_secret=repo[['app_secret']],
@@ -213,14 +214,29 @@ writeSchedulerEmail <- function(repo, email, content, time, email_response){
                     config)
 }
 
-updateSchedulerEmail <- function(repo, email, content, time, id){
-        parameters <- list(address=email,
-                           content=content,
-                           encrypt='false')
-        config <- list(repo=repo[['app_key']],
-                       time=time,
-                       task='email',
-                       parameters=parameters)
+updateSchedulerEmail <- function(repo, email, content, time, response_structure, id){
+        if(missing(response_structure)) {
+                parameters <- list(address=email,
+                                   content=content,
+                                   encrypt='false')
+                config <- list(repo=repo[['app_key']],
+                               time=time,
+                               task='email',
+                               parameters=parameters)
+        } else {
+                parameters <- list(address=email,
+                                   content=content,
+                                   response_structure=response_structure,
+                                   repo_url=repo[['url']],
+                                   repo_key=repo[['app_key']],
+                                   repo_secret=repo[['app_secret']],
+                                   encrypt='false')
+                config <- list(repo=repo[['app_key']],
+                               time=time,
+                               task='email',
+                               email_response = TRUE,
+                               parameters=parameters)
+        }
         updateRecord(repo, 
                      itemsUrl(repo[['url']], schedulerKey()), 
                      config,
