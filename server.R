@@ -41,6 +41,10 @@ shinyServer(function(input, output, session) {
                 renderUpgrade(session)
         })
         
+        output$host <- renderText({
+                session$clientData$url_hostname
+        })
+        
 # Bank specific functions =================================
         csv_import_Easybank <- function(myFile) {
                 tryCatch({

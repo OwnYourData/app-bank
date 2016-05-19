@@ -120,6 +120,7 @@ navbarMenu('Infos',
                                     p('MIT Lizenz, 2016')),
                             mainPanel(
                                     h2('akutelle Version: 0.4.1'),
+                                    htmlOutput('host'),
                                     htmlOutput('upgradeLink'),
                                     hr(),
                                     h3('Versionsverlauf'),
