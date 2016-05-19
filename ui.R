@@ -112,24 +112,22 @@ navbarMenu('Infos',
                                         "office@ownyourdata.eu")),
                                     p('Bugtracking: ',
                                       a(href="https://github.com/OwnYourData/app-bank/issues",
-                                        "Github"))),
+                                        "Github")),
+                                    hr(),
+                                    p('entwickelt von ',
+                                      a(href="https://www.ownyourdata.eu",
+                                        'https://OwnYourData.eu')),
+                                    p('MIT Lizenz, 2016')),
                             mainPanel(
-                                    h2('akutelle Version: 0.4.1',  
-                                    p(getOption("shiny.host")),
-                                    if(!is.null(getOption("shiny.host"))) 
-                                            h4('Upgrade: ',
-                                               a('hier klicken!', 
-                                                  href=paste0('https://dashboard.heroku.com/apps/', 
-                                                              strsplit(gsub("http://|https://|www\\.", "", getOption("shiny.host")), "/")[[c(1, 1)]],
-                                                              '/deploy/github'))),
-                                    if(!is.null(getOption("shiny.host")))
-                                        helpText('Anmerkung: zum Upgrade musst du auf der verlinkten Seite ganz nach unten scrollen und dort auf die Schaltfläche "Deploy Branch" klicken; der Installationsvorgang dauert dann etwa 10 Minuten'),
+                                    h2('akutelle Version: 0.4.1'),
+                                    htmlOutput('upgradeLink'),
+                                    hr(),
                                     h3('Versionsverlauf'),
                                     p(strong('Version 0.4.1')),
                                     p('UI Update (Menüleiste)'),
                                     p(strong('Version 0.4.0')),
                                     p('Kontoimport für IngDiBa und Erste Group hinzugefügt'),
                                     p(strong('Version 0.3.0')),
-                                    p('erstes Release')))
+                                    p('erstes Release'))
                     )))
 ))

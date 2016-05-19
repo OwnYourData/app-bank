@@ -55,6 +55,24 @@ getPiaConnection <- function(appName){
           app_secret = app_secret)
 }
 
+# Default Text Blocks =====================================
+renderUpgrade <- function(session){
+        if(grepl(session$clientData$url_hostname, 'herokuapp'))
+                paste0('<h4>Upgrade: <a href="https://dashboard.heroku.com/apps/',
+                       strsplit(gsub("http://|https://|www\\.", "", 
+                                     session$clientData$url_hostname), 
+                                "/")[[c(1, 1)]],
+                       '/deploy/github">hier klicken</a></h4>',
+                       '<p class="help-block">Anmerkung: zum Upgrade musst du auf der verlinkten Seite ganz nach unten scrollen und dort auf die Schaltfläche "Deploy Branch" klicken; der Installationsvorgang dauert dann etwa 10 Minuten</p>')
+        
+}
+
+internetAlert <- function(session, appUrl){
+        createAlert(session, 'topAlert', style='danger', title='Sie befinden sich auf einer unsicheren Webseite!',
+                    content=paste0("Die auf dieser Webseite eingegebenen und hochgeladenden Daten können möglicherweise durch Unberechtigte mitgelesen werden - <a href='https://www.ownyourdata.eu/laendervergleich-datenschutz/'>weitere Infos</a>.<br><strong>Lösung:</strong> <a href='", appUrl, "'>Installiere</a> die App an einem sicheren Ort!"), append=FALSE)
+        
+}
+
 # Accessing a Repo ========================================
 defaultHeaders <- function(token) {
         c('Accept'        = '*/*',
@@ -105,7 +123,7 @@ writeRecord <- function(repo, url, record) {
 updateRecord <- function(repo, url, record, id) {
         headers <- defaultHeaders(repo[['token']])
         record$id <- as.numeric(id)
-        data <- gsub("\\[|\\]", '', 
+        data <- gsub("^\\[|\\]$", '', 
                      toJSON(record, auto_unbox = TRUE))
         response <- tryCatch(
                 postForm(url,

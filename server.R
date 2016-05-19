@@ -37,7 +37,10 @@ prevInstitute <- ''
 
 # Shiny Server ============================================
 shinyServer(function(input, output, session) {
-
+        output$upgradeLink <- renderText({
+                renderUpgrade(session)
+        })
+        
 # Bank specific functions =================================
         csv_import_Easybank <- function(myFile) {
                 tryCatch({
@@ -228,8 +231,7 @@ shinyServer(function(input, output, session) {
 # Bank specific output fields =============================
         output$plot <- renderPlot({
                 if(first) {
-                        createAlert(session, 'topAlert', style='danger', title='Sie befinden sich auf einer unsicheren Webseite!',
-                                    content="Die auf dieser Webseite eingegebenen und hochgeladenden Daten können möglicherweise durch Unberechtigte mitgelesen werden - <a href='https://www.ownyourdata.eu/laendervergleich-datenschutz/'>weitere Infos</a>.<br><strong>Lösung:</strong> <a href='https://www.ownyourdata.eu/apps/kontodaten-visualisierung-app/'>Installieren</a> sie die <em>Kontoauszüge App</em> an einem sicheren Ort ihrer Wahl!", append=FALSE)
+                        internetAlert(session, 'https://www.ownyourdata.eu/apps/kontodaten-visualisierung-app/')
                         first <<- FALSE                  
                 }
                 closeAlert(session, 'noDataAlert')
