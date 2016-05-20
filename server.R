@@ -1,4 +1,4 @@
-# OYD: Kontoentwicklung  - last update:2016-05-02
+# OYD: Kontoentwicklung  - last update:2016-05-20
 # Manifest for bank app ===================================
 '
 encode with https://www.base64encode.org/
@@ -40,11 +40,7 @@ shinyServer(function(input, output, session) {
         output$upgradeLink <- renderText({
                 renderUpgrade(session)
         })
-        
-        output$host <- renderText({
-                session$clientData$url_hostname
-        })
-        
+
 # Bank specific functions =================================
         csv_import_Easybank <- function(myFile) {
                 tryCatch({

@@ -57,11 +57,9 @@ getPiaConnection <- function(appName){
 
 # Default Text Blocks =====================================
 renderUpgrade <- function(session){
-        if(grepl(session$clientData$url_hostname, 'herokuapp'))
+        if(grepl('.herokuapp.com', session$clientData$url_hostname))
                 paste0('<h4>Upgrade: <a href="https://dashboard.heroku.com/apps/',
-                       strsplit(gsub("http://|https://|www\\.", "", 
-                                     session$clientData$url_hostname), 
-                                "/")[[c(1, 1)]],
+                       strsplit(session$clientData$url_hostname, '.', fixed=TRUE)[[1]][1],
                        '/deploy/github">hier klicken</a></h4>',
                        '<p class="help-block">Anmerkung: zum Upgrade musst du auf der verlinkten Seite ganz nach unten scrollen und dort auf die Schaltfläche "Deploy Branch" klicken; der Installationsvorgang dauert dann etwa 10 Minuten</p>')
         
