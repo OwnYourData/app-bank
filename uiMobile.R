@@ -1,0 +1,3 @@
+uiMobile <- function(){
+        uiOutput('mobileUiStatusItemsRender')
+}

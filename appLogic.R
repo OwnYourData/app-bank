@@ -1,0 +1,370 @@
+# application specific logic
+# last update:2016-09-12
+
+source('oyd_dateselect.R', local=TRUE)
+source('oyd_email.R', local=TRUE)
+source('appLogicBankImport.R', local=TRUE)
+
+bankPlotly <- function(data){
+        closeAlert(session, 'myDataStatus')
+        if(nrow(data) > 0){
+                mymin <- as.Date(input$dateRange[1], "%d.%m.%Y")
+                mymax <- as.Date(input$dateRange[2], "%d.%m.%Y")
+                if(mymax > mymin){
+                        daterange <- seq(mymin, mymax, "days")
+                        data$dat <- as.Date(data$date)
+                        data <- data[order(data[, 'dat']),]
+                        data$cumsum <- cumsum(data$value)
+                        data <- data[data$dat %in% daterange, ]
+                        if(nrow(data) > 0){
+                                #euro <- dollar_format(prefix = "\u20ac ", suffix = "")
+                                gg <- ggplot(data, 
+                                             aes(x=dat, y=cumsum, 
+                                                 text=paste0(
+                                                         #format(dat, '%A, %d %b %Y'),
+                                                         format(dat, '%d.%m.%Y'),
+                                                         ': \u20ac ',
+                                                         formatC(as.numeric(value), format='f', digits=2, big.mark=','), 
+                                                         '<br>',
+                                                         description
+                                                 ))) + #label=paste0('Betrag:<br>',description), 
+                                        scale_y_continuous(labels=dollar_format(prefix="€")) + 
+                                        xlab('') +
+                                        ylab('') +
+                                        geom_line(group=1) + 
+                                        geom_point() + 
+                                        theme_bw()
+                                ggplotly(gg, tooltip=c('text'))
+                        } else {
+                                createAlert(session, 'dataStatus', alertId = 'myDataStatus',
+                                            style = 'warning', append = FALSE,
+                                            title = 'Keine Daten im gewählten Zeitfenster',
+                                            content = 'Für das ausgewählte Zeitfenster sind keine Daten vorhanden.')
+                                plotly_empty()
+                        }
+                } else {
+                        createAlert(session, 'dataStatus', alertId = 'myDataStatus',
+                                    style = 'warning', append = FALSE,
+                                    title = 'Ungültiges Zeitfenster',
+                                    content = 'Im ausgewählten Zeitfenster liegt das End-Datum vor dem Beginn-Datum. Korriege die Eingabe!')
+                        plotly_empty()
+                }
+        } else {
+                createAlert(session, 'dataStatus', alertId = 'myDataStatus',
+                            style = 'warning', append = FALSE,
+                            title = 'Keine Daten in der PIA vorhanden',
+                            content = 'Derzeit sind noch keine Daten in der PIA erfasst. Wechsle zu "Datenquellen" und importiere Kontodaten oder richte auch gleich ein Erinnerungsmail ein!')
+                plotly_empty()
+        }
+}
+
+output$bankPlot <- renderPlotly({
+        data <- currData()
+        bankPlotly(data)
+})
+
+csv_import <- function(){
+        bankInstitute <- input$bankInstitute
+        bankFile <- input$bankFile
+        if (is.null(bankFile) | 
+            bankInstitute == 'auswählen...') {
+                data.frame()  
+        } else {
+                config <- list()
+                if(input$bankImportHeader == 1) {
+                        config$header <- FALSE
+                } else {
+                        config$header <- TRUE
+                }
+                config$sep         <- input$bankImportSep
+                quoteStr <- input$bankImportQuote
+                config$quote       <- sub("\\\\", "\\", quoteStr)
+                config$dec         <- input$bankImportDec
+                config$encoding    <- input$bankImportEncoding
+                config$descEnc     <- input$bankImportDescEnc
+                config$dateFormat  <- input$bankImportDateFormat
+                config$dateColumn  <- input$bankImportDateColumn
+                config$descColumn  <- input$bankImportDescColumn
+                config$valueColumn <- input$bankImportValueColumn
+                config$valueSoll   <- input$bankImportValueSoll
+                config$valueHaben  <- input$bankImportValueHaben
+                data <- csvImportDynamic(bankFile, config)
+                colnames(data) <- c('date', 
+                                    'description', 
+                                    'id', 
+                                    'value')
+                data
+        }
+}
+
+appData <- function(data){
+        data$descriptionOrig <- data$description
+        data
+}
+
+observeEvent(input$bankImport, {
+        importData <- csv_import()
+        app <- currApp()
+        createPiaData <- data.frame()
+        if(length(all.equal(app, logical(0)))>1){
+                piaData <- currData()
+                url <- itemsUrl(app[['url']], app[['app_key']])
+                
+                importDigest <- createDigest(importData, appFields)
+                piaDigest <- createDigest(piaData, appFields)
+                createPiaData <- 
+                        importData[!(importDigest$digest %in% piaDigest$digest), ]
+                recCnt <- nrow(createPiaData)
+                if(recCnt > 0){
+                        withProgress(message='Daten importieren', 
+                                     max=recCnt, {
+                                             cnt <- 0
+                                             if(nrow(createPiaData) > 0){
+                                                     for(i in 1:nrow(createPiaData)){
+                                                             cnt <- cnt + 1
+                                                             dataItem <- preserveDate(
+                                                                     createPiaData[i, appFields])
+                                                             dataItem$descriptionOrig <- dataItem$description
+                                                             writeItem(app, url, dataItem)
+                                                             setProgress(value=cnt,
+                                                                         detail=paste0(cnt, '/', recCnt,
+                                                                                       ' Datensätze'))
+                                                     }
+                                             }
+                                     })
+                }
+                output$bankImportInfo <- renderUI(paste0(nrow(createPiaData), 
+                                                         ' Datensätze wurden importiert'))
+                data <- data.frame()
+                if(nrow(piaData) > 0){
+                        if(nrow(createPiaData) > 0) {
+                                data <- rbind(piaData[, c('date', 'description', 'id', 'value')], 
+                                              createPiaData)
+                        } else {
+                                data <- piaData[, c('date', 'description', 'id', 'value')]
+                        }
+                } else {
+                        if(nrow(createPiaData) > 0) {
+                                data <- createPiaData
+                        }
+                }
+                output$bankPlot <- renderPlotly({
+                        bankPlotly(data)
+                })
+                output$dataSheet = renderRHandsontable({
+                        DF <- data.frame()
+                        if(nrow(data) > 0){
+                                data <- data[!(is.na(data[[appFieldKey]]) | 
+                                               as.character(data[[appFieldKey]]) == 'NA'), ]
+                                suppressWarnings(DF <- hot_dat2DF(data, TRUE))
+                        }
+                        # write data to Hot
+                        setHot(DF)
+                        # nice formatting
+                        if(nrow(DF)>20) {
+                                rhandsontable(DF, useTypes=TRUE, height=400) %>%
+                                        hot_table(highlightCol=TRUE, highlightRow=TRUE,
+                                                  allowRowEdit=TRUE)
+                        } else {
+                                rhandsontable(DF, useTypes=TRUE) %>%
+                                        hot_table(highlightCol=TRUE, highlightRow=TRUE,
+                                                  allowRowEdit=TRUE)
+                        }
+                })
+        }        
+})
+
+observeEvent(input$bankInstitute, {
+        switch (input$bankInstitute,
+                easy = {
+                        updateSelectInput(session,
+                                          'bankImportHeader', 
+                                          selected = 2)
+                        updateTextInput(session,
+                                        'bankImportSep',
+                                        value=';')
+                        updateTextInput(session,
+                                        'bankImportQuote',
+                                        value = '\"')
+                        updateTextInput(session,
+                                        'bankImportDec',
+                                        value = '.')
+                        updateTextInput(session,
+                                        'bankImportEncoding',
+                                        value = 'ISO-8859-1')
+                        updateTextInput(session,
+                                        'bankImportDescEnc',
+                                        value = 'latin1')
+                        updateTextInput(session,
+                                        'bankImportDateFormat',
+                                        value = '%d.%m.%Y')
+                        updateNumericInput(session,
+                                           'bankImportDateColumn',
+                                           value = 3)
+                        updateNumericInput(session,
+                                           'bankImportDescColumn',
+                                           value = 2)
+                        updateNumericInput(session,
+                                           'bankImportValueColumn',
+                                           value = 5)
+                        updateNumericInput(session,
+                                           'bankImportValueSoll',
+                                           value = NA)
+                        updateNumericInput(session,
+                                           'bankImportValueHaben',
+                                           value = NA)
+                },
+                erste = {
+                        updateSelectInput(session,
+                                          'bankImportHeader', 
+                                          selected = 1)
+                        updateTextInput(session,
+                                        'bankImportSep',
+                                        value=';')
+                        updateTextInput(session,
+                                        'bankImportQuote',
+                                        value = "\\\"")
+                        updateTextInput(session,
+                                        'bankImportDec',
+                                        value = '.')
+                        updateTextInput(session,
+                                        'bankImportEncoding',
+                                        value = 'ISO-8859-1')
+                        updateTextInput(session,
+                                        'bankImportDescEnc',
+                                        value = 'latin1')
+                        updateTextInput(session,
+                                        'bankImportDateFormat',
+                                        value = '%d.%m.%y')
+                        updateNumericInput(session,
+                                           'bankImportDateColumn',
+                                           value = 2)
+                        updateNumericInput(session,
+                                           'bankImportDescColumn',
+                                           value = 1)
+                        updateNumericInput(session,
+                                           'bankImportValueColumn',
+                                           value = 3)
+                        updateNumericInput(session,
+                                           'bankImportValueSoll',
+                                           value = NA)
+                        updateNumericInput(session,
+                                           'bankImportValueHaben',
+                                           value = NA)
+                },
+                ingdiba = {
+                        updateSelectInput(session,
+                                          'bankImportHeader', 
+                                          selected = 1)
+                        updateTextInput(session,
+                                        'bankImportSep',
+                                        value=';')
+                        updateTextInput(session,
+                                        'bankImportQuote',
+                                        value = "\\\"")
+                        updateTextInput(session,
+                                        'bankImportDec',
+                                        value = '.')
+                        updateTextInput(session,
+                                        'bankImportEncoding',
+                                        value = 'ISO-8859-1')
+                        updateTextInput(session,
+                                        'bankImportDescEnc',
+                                        value = 'latin1')
+                        updateTextInput(session,
+                                        'bankImportDateFormat',
+                                        value = '%d.%m.%Y')
+                        updateNumericInput(session,
+                                           'bankImportDateColumn',
+                                           value = 3)
+                        updateNumericInput(session,
+                                           'bankImportDescColumn',
+                                           value = 2)
+                        updateNumericInput(session,
+                                           'bankImportValueColumn',
+                                           value = NA)
+                        updateNumericInput(session,
+                                           'bankImportValueSoll',
+                                           value = 5)
+                        updateNumericInput(session,
+                                           'bankImportValueHaben',
+                                           value = 6)
+                },
+                ba = {
+                        updateSelectInput(session,
+                                          'bankImportHeader', 
+                                          selected = 1)
+                        updateTextInput(session,
+                                        'bankImportSep',
+                                        value=';')
+                        updateTextInput(session,
+                                        'bankImportQuote',
+                                        value = "\\\"")
+                        updateTextInput(session,
+                                        'bankImportDec',
+                                        value = '.')
+                        updateTextInput(session,
+                                        'bankImportEncoding',
+                                        value = 'macroman')
+                        updateTextInput(session,
+                                        'bankImportDescEnc',
+                                        value = 'macroman')
+                        updateTextInput(session,
+                                        'bankImportDateFormat',
+                                        value = '%d.%m.%y')
+                        updateNumericInput(session,
+                                           'bankImportDateColumn',
+                                           value = 1)
+                        updateNumericInput(session,
+                                           'bankImportDescColumn',
+                                           value = 3)
+                        updateNumericInput(session,
+                                           'bankImportValueColumn',
+                                           value = 6)
+                        updateNumericInput(session,
+                                           'bankImportValueSoll',
+                                           value = NA)
+                        updateNumericInput(session,
+                                           'bankImportValueHaben',
+                                           value = NA)
+                },
+                {
+                        updateSelectInput(session,
+                                          'bankImportHeader', 
+                                          selected = 1)
+                        updateTextInput(session,
+                                        'bankImportSep',
+                                        value=';')
+                        updateTextInput(session,
+                                        'bankImportQuote',
+                                        value = '\"')
+                        updateTextInput(session,
+                                        'bankImportDec',
+                                        value = '.')
+                        updateTextInput(session,
+                                        'bankImportEncoding',
+                                        value = 'utf-8')
+                        updateTextInput(session,
+                                        'bankImportDescEnc',
+                                        value = 'latin1')
+                        updateTextInput(session,
+                                        'bankImportDateFormat',
+                                        value = '%d.%m.%Y')
+                        updateNumericInput(session,
+                                           'bankImportDateColumn',
+                                           value = 1)
+                        updateNumericInput(session,
+                                           'bankImportDescColumn',
+                                           value = 3)
+                        updateNumericInput(session,
+                                           'bankImportValueColumn',
+                                           value = 2)
+                        updateNumericInput(session,
+                                           'bankImportValueSoll',
+                                           value = NA)
+                        updateNumericInput(session,
+                                           'bankImportValueHaben',
+                                           value = NA)
+                }
+        )
+})
