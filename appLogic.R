@@ -209,10 +209,10 @@ observeEvent(input$bankInstitute, {
                                            value = 5)
                         updateNumericInput(session,
                                            'bankImportValueSoll',
-                                           value = NA)
+                                           value = 0)
                         updateNumericInput(session,
                                            'bankImportValueHaben',
-                                           value = NA)
+                                           value = 0)
                 },
                 erste = {
                         updateSelectInput(session,
@@ -247,10 +247,10 @@ observeEvent(input$bankInstitute, {
                                            value = 3)
                         updateNumericInput(session,
                                            'bankImportValueSoll',
-                                           value = NA)
+                                           value = 0)
                         updateNumericInput(session,
                                            'bankImportValueHaben',
-                                           value = NA)
+                                           value = 0)
                 },
                 ingdiba = {
                         updateSelectInput(session,
@@ -282,7 +282,7 @@ observeEvent(input$bankInstitute, {
                                            value = 2)
                         updateNumericInput(session,
                                            'bankImportValueColumn',
-                                           value = NA)
+                                           value = 0)
                         updateNumericInput(session,
                                            'bankImportValueSoll',
                                            value = 5)
@@ -323,10 +323,10 @@ observeEvent(input$bankInstitute, {
                                            value = 6)
                         updateNumericInput(session,
                                            'bankImportValueSoll',
-                                           value = NA)
+                                           value = 0)
                         updateNumericInput(session,
                                            'bankImportValueHaben',
-                                           value = NA)
+                                           value = 0)
                 },
                 {
                         updateSelectInput(session,
@@ -361,10 +361,10 @@ observeEvent(input$bankInstitute, {
                                            value = 2)
                         updateNumericInput(session,
                                            'bankImportValueSoll',
-                                           value = NA)
+                                           value = 0)
                         updateNumericInput(session,
                                            'bankImportValueHaben',
-                                           value = NA)
+                                           value = 0)
                 }
         )
 })

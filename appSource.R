@@ -35,11 +35,11 @@ appSource <- function(){
                                                                textInput('bankImportDateFormat', label='Datumsformat:', '%d.%m.%Y')
                                                         ),
                                                         column(4,
-                                                               numericInput('bankImportDateColumn', label='Datum-Spalte:', NA),
-                                                               numericInput('bankImportDescColumn', label='Text-Spalte:', NA),
-                                                               numericInput('bankImportValueColumn', label='Betrag-Spalte:', NA),
-                                                               numericInput('bankImportValueSoll', label='Soll-Spalte:', NA),
-                                                               numericInput('bankImportValueHaben', label='Haben-Spalte:', NA)
+                                                               numericInput('bankImportDateColumn', label='Datum-Spalte:', 0),
+                                                               numericInput('bankImportDescColumn', label='Text-Spalte:', 0),
+                                                               numericInput('bankImportValueColumn', label='Betrag-Spalte:', 0),
+                                                               numericInput('bankImportValueSoll', label='Soll-Spalte:', 0),
+                                                               numericInput('bankImportValueHaben', label='Haben-Spalte:', 0)
                                                         )
                                                 )),
                                         actionButton('bankImport', 'Daten importieren', icon('save')),

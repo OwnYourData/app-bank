@@ -15,7 +15,7 @@ csvImportDynamic <- function(myFile, config) {
                 data$date <- as.Date(as.character(as.POSIXct(as.character(
                         data[, config$dateColumn]), 
                         format = config$dateFormat)))
-                if(is.na(config$valueColumn)){
+                if(config$valueColumn < 1){
                         data$soll <- convAccountStr(data[, config$valueSoll])
                         data$haben <- convAccountStr(data[, config$valueHaben])
                         data$value <- data$haben - data$soll
