@@ -6,7 +6,22 @@
 ###########################################################
 # Update this line with the R packages to install:
 
-my_packages = c('shiny', 'shinyBS', 'DT', 'tidyr', 'digest', 'RCurl', 'jsonlite', 'dplyr')
+my_packages = c('shiny', 
+                'shinyBS', 
+                'shinyStore',
+                'RCurl', 
+                'httr',
+                'jsonlite', 
+                'rjson',
+                'dplyr',
+                'tidyr', 
+                'lubridate',
+                'rhandsontable',
+                'sqldf',
+                'stringi',
+                'digest', 
+                'plotly',
+                'scales')
 
 ###########################################################
 
