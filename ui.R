@@ -1,4 +1,3 @@
-library(ggvis)
 shinyUI(
         tagList(
                 conditionalPanel(
