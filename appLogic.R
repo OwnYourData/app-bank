@@ -60,6 +60,7 @@ bankPlotly <- function(data){
 
 output$bankPlot <- renderPlotly({
         data <- currData()
+        pdf(NULL)
         bankPlotly(data)
 })
 
@@ -149,6 +150,7 @@ observeEvent(input$bankImport, {
                         }
                 }
                 output$bankPlot <- renderPlotly({
+                        pdf(NULL)
                         bankPlotly(data)
                 })
                 output$dataSheet = renderRHandsontable({
