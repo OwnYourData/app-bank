@@ -45,6 +45,13 @@ appSource <- function(){
                                         actionButton('bankImport', 'Daten importieren', icon('save')),
                                         htmlOutput('bankImportInfo')
                                ),
+                               tabPanel('Referenzwert festlegen',
+                                        helpText('Kontobewegungen beschreiben Eingänge oder Ausgaben von einem Konto. Durch die Angabe eines Referenzwertes kann daraus der Kontostand zu anderen Zeiten berechnet werden.'),
+                                        dateInput('referenceDate', label = 'Datum des Referenzwerts:'),
+                                        numericInput('referenceValue', label = 'Referenzwert:', value=0),
+                                        actionButton('saveReference', 'Referenzwert speichern', icon('save')),
+                                        htmlOutput('saveReferenceInfo')
+                               ),
                                tabPanel('Email Benachrichtigung einrichten',
                                         br())
                        )

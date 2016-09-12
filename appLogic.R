@@ -14,10 +14,28 @@ bankPlotly <- function(data){
                         daterange <- seq(mymin, mymax, "days")
                         data$dat <- as.Date(data$date)
                         data <- data[order(data[, 'dat']),]
-                        data$cumsum <- cumsum(data$value)
                         data <- data[data$dat %in% daterange, ]
                         if(nrow(data) > 0){
                                 #euro <- dollar_format(prefix = "\u20ac ", suffix = "")
+                                # all data until reference value
+                                app <- currApp()
+                                url <- itemsUrl(app[['url']], paste0(app[['app_key']],
+                                                                     '.reference'))
+                                refData <- readItems(app, url)
+                                if(nrow(refData) == 1){
+                                        subData <- data[as.Date(as.character(data$date)) < as.Date(refData$date), ]
+                                        startValue <- refData$value - sum(subData$value)
+                                        minDate <- min(data$dat)
+                                        refRow <- data.frame(as.character(as.Date(minDate)-1),
+                                                    'Startbetrag',
+                                                    -1,
+                                                    startValue,
+                                                    'Starbetrag',
+                                                    as.Date(minDate)-1)
+                                        colnames(refRow) <- colnames(data)
+                                        data <- rbind(refRow, data)
+                                }
+                                data$cumsum <- cumsum(data$value)
                                 gg <- ggplot(data, 
                                              aes(x=dat, y=cumsum, 
                                                  text=paste0(
@@ -369,4 +387,35 @@ observeEvent(input$bankInstitute, {
                                            value = 0)
                 }
         )
+})
+
+output$saveReferenceInfo <- renderUI({
+        app <- currApp()
+        url <- itemsUrl(app[['url']], paste0(app[['app_key']],
+                                             '.reference'))
+        refData <- readItems(app, url)
+        if(nrow(refData) == 1){
+                updateDateInput(session, 'referenceDate',
+                                value = refData$date)
+                updateNumericInput(session, 'referenceValue',
+                                   value = refData$value)
+        }
+        ''
+})
+
+observeEvent(input$saveReference, {
+        app <- currApp()
+        url <- itemsUrl(app[['url']], paste0(app[['app_key']],
+                                             '.reference'))
+        data <- list(date=as.character(input$referenceDate),
+                     value=input$referenceValue)
+        refData <- readItems(app, url)
+        if(nrow(refData) > 0){
+                retVal <- updateItem(app, url, data, refData$id)
+                output$saveReferenceInfo <- renderUI('Referenzwert aktualisiert')
+        } else {
+                retVal <- writeItem(app, url, data)
+                output$saveReferenceInfo <- renderUI('Referenzwert gespeichert')
+        }
+        
 })
