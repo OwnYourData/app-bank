@@ -11,8 +11,8 @@ uiInit <- function(){
                                         if (", isDesktop , ") {
                                                 $('#startConfig').modal('show');
                                         }
-                                        $('button:contains(\"Close\")').html('Schließen');
                                 }
+                                $('button:contains(\"Close\")').html('Schließen');
                                 $('.dropdown-menu').attr('class', 'dropdown-menu pull-right');
                                 $('a').filter(function(index) { return $(this).text() === \"", appTitle, "\"; }).css('display', 'none');
                                 $('a').filter(function(index) { return $(this).text() === \"hidden\"; }).css('display', 'none');

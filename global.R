@@ -5,8 +5,7 @@
 # - run locally
 #   runApp('~/cs/ownyourdata/apps/bank2', host='0.0.0.0', port=1234)
 # - copy files to Github
-#   cp -r *.R *.txt www github/app-template; cd github/app-template;
-#   for i in app* ; do mv "$i" "_$i" ; done
+#   cp -r *.R *.r app*.txt www github/app-bank/; cd github/app-bank;
 
 # UI files ================================================
 source("uiInit.R")

@@ -419,3 +419,14 @@ observeEvent(input$saveReference, {
         }
         
 })
+
+observeEvent(input$endMailer, {
+        app <- currApp()
+        url <- itemsUrl(app[['url']], schedulerKey())
+        data <- readItems(app, url)
+        if(nrow(data) > 0){
+                retVal <- deleteItem(app, url, data$id)
+        }
+        updateTextInput(session, 'mailerReceiver', value='')
+        updateSelectInput(session, 'mailerInterval', selected = 1)
+})

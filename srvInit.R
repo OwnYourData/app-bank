@@ -7,6 +7,7 @@ observeEvent(input$p1next, ({
                        style = list(
                                "Willkommen" = 'info',
                                'PIA' = 'primary',
+                               'Email' = 'info',
                                'Fertig' = 'info'))
 }))
 
@@ -16,12 +17,37 @@ observe({
         piaUrl <<- input$store$pia_url
         appKey <<- input$store$app_key
         appSecret <<- input$store$app_secret
-        updateTextInput(session, "modalPiaUrl", value=piaUrl)
-        updateTextInput(session, "modalPiaId", value=appKey)
-        updateTextInput(session, "modalPiaSecret", value=appSecret)
-        updateTextInput(session, "pia_urlMobile", value=piaUrl)
-        updateTextInput(session, "app_keyMobile", value=appKey)
-        updateTextInput(session, "app_secretMobile", value=appSecret)
+        
+        app <- currApp()
+        if(length(all.equal(app, logical(0)))>1){
+                closeAlert(session, 'myPiaStatus')
+                updateTextInput(session, 'modalPiaUrl', value=piaUrl)
+                updateTextInput(session, 'modalPiaId', value=appKey)
+                updateTextInput(session, 'modalPiaSecret', value=appSecret)
+                updateTextInput(session, 'pia_urlMobile', value=piaUrl)
+                updateTextInput(session, 'app_keyMobile', value=appKey)
+                updateTextInput(session, 'app_secretMobile', value=appSecret)
+                output$currentToken <- renderUI({
+                        HTML(paste0('<strong>aktueller Token:</strong><br>',
+                                    app[['token']],
+                                    '<br><br>'))
+                })
+                piaMailConfig <- getPiaEmailConfig(app)
+                if(!is.null(nrow(piaMailConfig))){
+                        updateTextInput(session, 'modalMailerAddress', value=as.character(piaMailConfig$server))
+                        updateNumericInput(session, 'modalMailerPort', value=as.numeric(as.character(piaMailConfig$port)))
+                        updateTextInput(session, 'modalMailerUser', value=as.character(piaMailConfig$user))
+                        updateTextInput(session, 'modalMailerPassword', value=as.character(piaMailConfig$pwd))
+                }        
+        } else {
+                updateTextInput(session, 'modalPiaUrl', value='')
+                updateTextInput(session, 'modalPiaId', value='')
+                updateTextInput(session, 'modalPiaSecret', value='')
+                updateTextInput(session, 'pia_urlMobile', value='')
+                updateTextInput(session, 'app_keyMobile', value='')
+                updateTextInput(session, 'app_secretMobile', value='')
+                output$currentToken <- renderText('')
+        }
         
 })
 
@@ -45,8 +71,24 @@ observeEvent(input$p2prev, ({
                        style = list(
                                "Willkommen" = 'primary',
                                'PIA' = 'info',
+                               'Email' = 'info',
                                'Fertig' = 'info'))
 }))
+
+observeEvent(input$disconnectPIA, {
+        updateStore(session, 'pia_url', NA)
+        updateStore(session, 'app_key', NA)
+        updateStore(session, 'app_secret', NA)
+        piaUrl <<- ""
+        appKey <<- ""
+        appSecret <<- ""
+        createAlert(session, 'piaStatus', alertId = 'myPiaStatus', 
+                    style = 'danger', append = FALSE,
+                    title = 'PIA Verbindung',
+                    content = paste0('Es sind keine oder nur unvollständige Verbindungsdaten vorhanden. Wähle im Menü ',
+                                     icon('gear'),
+                                     ' rechts oben "Konfiguration" und überprüfe die Verbindungsdaten zu deiner PIA!'))
+})
 
 observeEvent(input$p2next, ({
         updateStore(session, "pia_url", isolate(input$modalPiaUrl))
@@ -65,7 +107,9 @@ observeEvent(input$p2next, ({
                 createAlert(session, 'piaStatus', alertId = 'myPiaStatus', 
                             style = 'danger', append = FALSE,
                             title = 'PIA Verbindung',
-                            content = 'Es sind keine oder nur unvollständige Verbindungsdaten vorhanden. Wähle im Menü rechts oben "Konfiguration" und überprüfe die Verbindungsdaten zu deiner PIA!')
+                            content = paste0('Es sind keine oder nur unvollständige Verbindungsdaten vorhanden. Wähle im Menü ',
+                                             icon('gear'),
+                                             ' rechts oben "Konfiguration" und überprüfe die Verbindungsdaten zu deiner PIA!'))
         } else {
                 closeAlert(session, 'myPiaStatus')
         }
@@ -90,12 +134,46 @@ observeEvent(input$p2next, ({
         # for re-rendering END -----
         
         updateCollapse(session, 'collapse',
+                       open = 'Email',
+                       style = list(
+                               "Willkommen" = 'info',
+                               'PIA' = 'info',
+                               'Email' = 'primary',
+                               'Fertig' = 'info'))
+}))
+
+observeEvent(input$p3next, {
+        app <- currApp()
+        url <- itemsUrl(app[['url']], schedulerEmailConfigKey())
+        data <- list(server=input$modalMailerAddress,
+                     port=input$modalMailerPort,
+                     user=input$modalMailerUser,
+                     pwd=input$modalMailerPassword)
+        mailConfig <- readItems(app, url)
+        if(nrow(mailConfig) > 0){
+                retVal <- updateItem(app, url, data, mailConfig$id)
+        } else {
+                retVal <- writeItem(app, url, data)
+        }
+        
+        updateCollapse(session, 'collapse',
                        open = 'Fertig',
                        style = list(
                                "Willkommen" = 'info',
                                'PIA' = 'info',
+                               'Email' = 'info',
                                'Fertig' = 'primary'))
-}))
+})
+
+observeEvent(input$p3skip, {
+        updateCollapse(session, 'collapse',
+                       open = 'Fertig',
+                       style = list(
+                               "Willkommen" = 'info',
+                               'PIA' = 'info',
+                               'Email' = 'info',
+                               'Fertig' = 'primary'))
+})
 
 observeEvent(input$p3prev, ({
         updateCollapse(session, 'collapse',
@@ -103,10 +181,21 @@ observeEvent(input$p3prev, ({
                        style = list(
                                "Willkommen" = 'info',
                                'PIA' = 'primary',
+                               'Email' = 'info',
                                'Fertig' = 'info'))
 }))
 
-observeEvent(input$p3close, ({
+observeEvent(input$p4prev, ({
+        updateCollapse(session, 'collapse',
+                       open = 'Email',
+                       style = list(
+                               "Willkommen" = 'info',
+                               'PIA' = 'info',
+                               'Email' = 'primary',
+                               'Fertig' = 'info'))
+}))
+
+observeEvent(input$p4close, ({
         app <- currApp()
         toggleModal(session, 'startConfig', toggle = "toggle")
 }))

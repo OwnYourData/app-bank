@@ -18,6 +18,7 @@ uiStatusDateSelect <- function(){
                                                'letzten 6 Monate'='4',
                                                'aktuelles Jahr'='5',
                                                'letztes Jahr'='6',
+                                               'alle Daten'='10',
                                                'individuell'='7'),
                                    selected = 4
                         )

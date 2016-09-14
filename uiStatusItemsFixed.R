@@ -2,7 +2,7 @@
 
 uiStatusItemsFixed <- function(){
         tabsetPanel(type='tabs',
-                    tabPanel('Plot',
+                    tabPanel('Konto Chart',
                              #plotOutput(outputId = 'bankPlot', height = '300px'),
                              br(),
                              plotlyOutput('bankPlot')

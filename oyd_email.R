@@ -20,18 +20,24 @@ getLocalEmailConfig <- reactive({
           'pwd'=pwd)
 })
 
-# fix me !!!
+schedulerKey <- function(){
+        'eu.ownyourdata.scheduler'        
+}
+
+schedulerEmailConfigKey <- function(){
+        'eu.ownyourdata.scheduler.email_config'
+}
+
 getPiaEmailConfig <- function(app){
-        vector()
-        # url <- itemsUrl(app[['url']], 
-        #                 schedulerEmailConfigKey())
-        # retVal <- readItems(repo, url)
-        # if(length(retVal) == 0 | 
-        #    nrow(retVal) == 0) {
-        #         vector()
-        # } else {
-        #         retVal
-        # }
+        url <- itemsUrl(app[['url']],
+                        schedulerEmailConfigKey())
+        retVal <- readItems(app, url)
+        if(length(retVal) == 0 |
+           nrow(retVal) == 0) {
+                vector()
+        } else {
+                retVal
+        }
 }
 
 # fix me !!!

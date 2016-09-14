@@ -53,7 +53,20 @@ appSource <- function(){
                                         htmlOutput('saveReferenceInfo')
                                ),
                                tabPanel('Email Benachrichtigung einrichten',
-                                        br())
+                                        br(),
+                                        bsAlert('mailConfigStatus'),
+                                        br(),
+                                        textInput('mailerReceiver', 'Emailadresse des Empfängers'),
+                                        selectInput('mailerInterval', 'Versandintervall:', choices = list(
+                                                'auswählen...' = 1,
+                                                'täglich'      = 2,
+                                                'wöchentlich'  = 3,
+                                                'monatlich'    = 4)),
+                                        conditionalPanel(
+                                                condition = 'input.mailerReceiver != ""',
+                                                actionButton('endMailer', 'Emailversand beenden', icon('trash-o'))
+                                        )
+                               )
                        )
                 )
         )
