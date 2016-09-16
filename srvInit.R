@@ -31,7 +31,7 @@ observe({
                 appSecret <<- urlParams[['APP_SECRET']]
         }
 
-        app <- currApp()
+        app <- setupApp(piaUrl, appKey, appSecret)
         if(length(all.equal(app, logical(0)))>1){
                 closeAlert(session, 'myPiaStatus')
                 updateTextInput(session, 'modalPiaUrl', value=piaUrl)
