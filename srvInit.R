@@ -14,10 +14,23 @@ observeEvent(input$p1next, ({
 observe({
         session$sendCustomMessage(type='setPiaUrl',
                                   input$store$pia_url)
-        piaUrl <<- input$store$pia_url
-        appKey <<- input$store$app_key
-        appSecret <<- input$store$app_secret
-        
+        urlParams <- parseQueryString(session$clientData$url_search)
+        if(is.null(urlParams[['PIA_URL']])){
+                piaUrl <<- input$store$pia_url
+        } else {
+                piaUrl <<- urlParams[['PIA_URL']]
+        }
+        if(is.null(urlParams[['APP_KEY']])){
+                appKey <<- input$store$pia_url
+        } else {
+                appKey <<- urlParams[['APP_KEY']]
+        }
+        if(is.null(urlParams[['APP_SECRET']])){
+                appSecret <<- input$store$pia_url
+        } else {
+                appSecret <<- urlParams[['APP_SECRET']]
+        }
+
         app <- currApp()
         if(length(all.equal(app, logical(0)))>1){
                 closeAlert(session, 'myPiaStatus')
@@ -40,15 +53,21 @@ observe({
                         updateTextInput(session, 'modalMailerPassword', value=as.character(piaMailConfig$pwd))
                 }        
         } else {
-                updateTextInput(session, 'modalPiaUrl', value='')
-                updateTextInput(session, 'modalPiaId', value='')
-                updateTextInput(session, 'modalPiaSecret', value='')
-                updateTextInput(session, 'pia_urlMobile', value='')
-                updateTextInput(session, 'app_keyMobile', value='')
-                updateTextInput(session, 'app_secretMobile', value='')
+                updateTextInput(session, 'modalPiaUrl', value=piaUrl)
+                updateTextInput(session, 'modalPiaId', value=appKey)
+                updateTextInput(session, 'modalPiaSecret', value=appSecret)
+                updateTextInput(session, 'pia_urlMobile', value=piaUrl)
+                updateTextInput(session, 'app_keyMobile', value=appKey)
+                updateTextInput(session, 'app_secretMobile', value=appSecret)
+                
+                # updateTextInput(session, 'modalPiaUrl', value='')
+                # updateTextInput(session, 'modalPiaId', value='')
+                # updateTextInput(session, 'modalPiaSecret', value='')
+                # updateTextInput(session, 'pia_urlMobile', value='')
+                # updateTextInput(session, 'app_keyMobile', value='')
+                # updateTextInput(session, 'app_secretMobile', value='')
                 output$currentToken <- renderText('')
         }
-        
 })
 
 observeEvent(input$mobilePiaSave, ({

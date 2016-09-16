@@ -8,7 +8,7 @@
 
 my_packages = c('shiny', 
                 'shinyBS', 
-                'shinyStore',
+                'devtools',
                 'RCurl', 
                 'httr',
                 'jsonlite', 
@@ -34,3 +34,6 @@ install_if_missing = function(p) {
   }
 }
 invisible(sapply(my_packages, install_if_missing))
+
+library(devtools)
+install_github("trestletech/shinyStore")
