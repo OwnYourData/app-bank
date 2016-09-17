@@ -7,9 +7,16 @@ uiInit <- function(){
                 ),
                 tags$script(paste0(
                         "$(window).load(function(){
-                                if (localStorage['oydStore\\\\pia_url'] === undefined) {
-                                        if (", isDesktop , ") {
+                                var url = window.location.href;
+                                if(url.indexOf('PIA_URL=') != -1){
+                                        // show info panel
+                                } else {
+                                        if(localStorage['oydStore\\\\pia_url'] === undefined) {
                                                 $('#startConfig').modal('show');
+                                        } else {
+                                                if(JSON.parse(localStorage['oydStore\\\\pia_url']).data === null) {
+                                                        $('#startConfig').modal('show');
+                                                }
                                         }
                                 }
                                 $('button:contains(\"Close\")').html('Schließen');

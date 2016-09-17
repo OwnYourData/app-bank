@@ -1,16 +1,19 @@
 # basic reactive functions for accessing PIA
 # last update:2016-08-24
 
-currApp <- reactive({
+currApp <- function(){
         app <- vector()
         piaMsg <- ''
-        pia_url <- input$store$pia_url
-        app_key <- input$store$app_key
-        app_secret <- input$store$app_secret
+        # pia_url <- input$store$pia_url
+        # app_key <- input$store$app_key
+        # app_secret <- input$store$app_secret
+        pia_url <- piaUrl
+        app_key <- appKey
+        app_secret <- appSecret
         if(is.null(pia_url) |
            is.null(app_key) | 
            is.null(app_secret)) {
-                piaMsg <- paste0('Es sind keine Verbindungsdaten eingerichtet. Wähle im Menü ',
+                piaMsg <- paste0('Es sind keine oder nur unvollständige Verbindungsdaten vorhanden. Wähle im Menü ',
                                  icon('gear'),
                                  ' rechts oben "Konfiguration" und trage die Verbindungsdaten zu deiner PIA ein!')
         } else {
@@ -64,7 +67,7 @@ currApp <- reactive({
                 }
         }
         app
-})
+}
 
 currData <- reactive({
         app <- currApp()

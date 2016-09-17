@@ -35,10 +35,14 @@ setupApp <- function(pia_url, app_key, app_secret) {
         app_token <- getToken(pia_url, 
                               app_key, 
                               app_secret)
-        c('url'        = pia_url,
-          'app_key'    = app_key,
-          'app_secret' = app_secret,
-          'token'      = app_token)
+        if(is.na(app_token)){
+                vector()
+        } else {
+                c('url'        = pia_url,
+                  'app_key'    = app_key,
+                  'app_secret' = app_secret,
+                  'token'      = app_token)
+        }
 }
 
 # Read and CRUD Operations for a Plugin (App) =============

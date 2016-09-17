@@ -15,23 +15,38 @@ observe({
         session$sendCustomMessage(type='setPiaUrl',
                                   input$store$pia_url)
         urlParams <- parseQueryString(session$clientData$url_search)
+        urlParamExist <- FALSE
         if(is.null(urlParams[['PIA_URL']])){
                 piaUrl <<- input$store$pia_url
         } else {
                 piaUrl <<- urlParams[['PIA_URL']]
+                urlParamExist <- TRUE
         }
         if(is.null(urlParams[['APP_KEY']])){
-                appKey <<- input$store$pia_url
+                appKey <<- input$store$app_key
         } else {
                 appKey <<- urlParams[['APP_KEY']]
+                urlParamExist <- TRUE
         }
         if(is.null(urlParams[['APP_SECRET']])){
-                appSecret <<- input$store$pia_url
+                appSecret <<- input$store$app_secret
         } else {
                 appSecret <<- urlParams[['APP_SECRET']]
+                urlParamExist <- TRUE
         }
 
         app <- setupApp(piaUrl, appKey, appSecret)
+        if(urlParamExist){
+                updateStore(session, "pia_url", piaUrl)
+                updateStore(session, "app_key", appKey)
+                updateStore(session, "app_secret", appSecret)
+                createAlert(session, 'urlStatus', alertId = 'myUrlStatus',
+                            style = 'info', append = FALSE,
+                            title = 'Neue PIA Verbindung',
+                            content = 'Beim Öffnen wurden neue Verbindungsdaten zur PIA übergeben und gespeichert.')
+        } else {
+                closeAlert(session, 'myUrlStatus')
+        }
         if(length(all.equal(app, logical(0)))>1){
                 closeAlert(session, 'myPiaStatus')
                 updateTextInput(session, 'modalPiaUrl', value=piaUrl)
@@ -44,6 +59,11 @@ observe({
                         HTML(paste0('<strong>aktueller Token:</strong><br>',
                                     app[['token']],
                                     '<br><br>'))
+                })
+                output$mobileToken <- renderUI({
+                        HTML(paste0('<hr>',
+                                   '<strong>Token:</strong> ', app[['token']],
+                                   '<br><br>'))
                 })
                 piaMailConfig <- getPiaEmailConfig(app)
                 if(!is.null(nrow(piaMailConfig))){
@@ -67,6 +87,7 @@ observe({
                 # updateTextInput(session, 'app_keyMobile', value='')
                 # updateTextInput(session, 'app_secretMobile', value='')
                 output$currentToken <- renderText('')
+                output$mobileToken <- renderText('')
         }
 })
 
@@ -79,8 +100,9 @@ observeEvent(input$mobilePiaSave, ({
         appSecret <<- isolate(input$app_secretMobile)
         app <- setupApp(piaUrl, appKey, appSecret)
         output$mobileToken <- renderUI({
-                paste('<strong>Token:</strong>',
-                       app[['token']])
+                HTML(paste0('<hr>',
+                           '<strong>Token:</strong> ', app[['token']],
+                           '<br><br>'))
         })
 }))
 
@@ -108,6 +130,20 @@ observeEvent(input$disconnectPIA, {
                                      icon('gear'),
                                      ' rechts oben "Konfiguration" und überprüfe die Verbindungsdaten zu deiner PIA!'))
 })
+
+observeEvent(input$disconnectPIAmobile, {
+        updateStore(session, 'pia_url', NA)
+        updateStore(session, 'app_key', NA)
+        updateStore(session, 'app_secret', NA)
+        piaUrl <<- ""
+        appKey <<- ""
+        appSecret <<- ""
+        updateTextInput(session, 'pia_urlMobile', value=piaUrl)
+        updateTextInput(session, 'app_keyMobile', value=appKey)
+        updateTextInput(session, 'app_secretMobile', value=appSecret)
+        output$mobileToken <- renderUI({''})
+})
+
 
 observeEvent(input$p2next, ({
         updateStore(session, "pia_url", isolate(input$modalPiaUrl))

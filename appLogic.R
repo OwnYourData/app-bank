@@ -82,6 +82,14 @@ output$bankPlot <- renderPlotly({
         bankPlotly(data)
 })
 
+output$mobileBankPlot <- renderPlot({
+        data <- currData()
+        data$dat <- as.Date(as.character(data$date))
+        data <- data[order(data[, 'dat']),]
+        data$cumsum <- cumsum(data$value)
+        plot(x=data$dat, y=data$cumsum, type='l', xlab='', ylab='')
+})
+
 csv_import <- function(){
         bankInstitute <- input$bankInstitute
         bankFile <- input$bankFile

@@ -23,7 +23,10 @@ uiDesktop <- function(){
                                  fluidRow(
                                          column(1),
                                          column(10,
-                                                bsAlert('piaStatus'))
+                                                tagList(
+                                                        bsAlert('urlStatus'),
+                                                        bsAlert('piaStatus'))
+                                         )
                                  ),
                                  uiApp()
                         ),
