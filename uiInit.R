@@ -25,8 +25,10 @@ uiInit <- function(){
                                 $('a').filter(function(index) { return $(this).text() === \"hidden\"; }).css('display', 'none');
                              });")),
                 tags$script(
-                        'Shiny.addCustomMessageHandler("setPiaUrl", function(x) {      
-                                $("#returnPIAlink").attr("href", x);
+                        'Shiny.addCustomMessageHandler("setPiaUrl", function(x) {
+                                $(window).load(function(){
+                                        $("#returnPIAlink").attr("href", x);
+                                });
                         })'
                 ),
                 tags$script(
