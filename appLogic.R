@@ -58,6 +58,7 @@ bankPlotly <- function(data){
                                             style = 'warning', append = FALSE,
                                             title = 'Keine Daten im gewählten Zeitfenster',
                                             content = 'Für das ausgewählte Zeitfenster sind keine Daten vorhanden.')
+                                session$sendCustomMessage(type='finishInit', NA)
                                 plotly_empty()
                         }
                 } else {
