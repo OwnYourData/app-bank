@@ -30,8 +30,10 @@ uiInit <- function(){
                         })'
                 ),
                 tags$script(
-                        'Shiny.addCustomMessageHandler("finishInit", function(x) {      
-                                $(".init-animation").fadeOut("slow");
+                        'Shiny.addCustomMessageHandler("finishInit", function(x) {  
+                                $(document).on("shiny:idle", function(event) {
+                                        $(".init-animation").fadeOut("slow");
+                                });
                         })'
                 ),
                 tags$script(
