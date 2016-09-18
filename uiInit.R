@@ -31,7 +31,7 @@ uiInit <- function(){
                 ),
                 tags$script(
                         'Shiny.addCustomMessageHandler("finishInit", function(x) {  
-                                $(document).on("shiny:idle", function(event) {
+                                $("#bankPlot").on("shiny:value", function(event) {
                                         $(".init-animation").fadeOut("slow");
                                 });
                         })'
