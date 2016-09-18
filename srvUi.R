@@ -17,7 +17,6 @@ renderUpgrade <- function(session){
 output$hdrImageLinkDesktop <- renderUI({
         # fix for "Raspberry Navigation"
         updateNavbarPage(session, 'mainPage', selected = appName)
-        session$sendCustomMessage(type='finishInit', NA)
         renderHdrImageLink()
 })
 
