@@ -21,10 +21,16 @@ currApp <- function(){
                    (nchar(app_key) > 0) & 
                    (nchar(app_secret) > 0)) {
                         app <- setupApp(pia_url, app_key, app_secret)
-                        if(is.na(app[['token']])){
+                        if(length(app) == 0){
                                 piaMsg <- paste0('Die angegebenen Verbindungsdaten zur PIA sind nicht korrekt oder die PIA kann derzeit nicht erreicht werden. Öffne deine PIA und überprüfe hier im Menü ',
                                                  icon('gear'),
                                                  ' rechts oben "Konfiguration" die PIA-Verbindungsdaten.')
+                        } else {
+                                if(is.na(app[['token']])){
+                                        piaMsg <- paste0('Die angegebenen Verbindungsdaten zur PIA sind nicht korrekt oder die PIA kann derzeit nicht erreicht werden. Öffne deine PIA und überprüfe hier im Menü ',
+                                                         icon('gear'),
+                                                         ' rechts oben "Konfiguration" die PIA-Verbindungsdaten.')
+                                }
                         }
                 } else {
                         piaMsg <- paste0('Es sind keine oder nur unvollständige Verbindungsdaten vorhanden. Wähle im Menü ',

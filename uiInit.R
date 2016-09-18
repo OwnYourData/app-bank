@@ -30,6 +30,11 @@ uiInit <- function(){
                         })'
                 ),
                 tags$script(
+                        'Shiny.addCustomMessageHandler("finishInit", function(x) {      
+                                $(".init-animation").fadeOut("slow");
+                        })'
+                ),
+                tags$script(
                         'Shiny.addCustomMessageHandler("setDisplayButton", function(x) { 
                                 var id = "#" + x;
                                 $("#buttonVisual").css("background-color", "#f5f5f5");
