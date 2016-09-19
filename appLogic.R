@@ -79,7 +79,6 @@ bankPlotly <- function(data){
 output$bankPlot <- renderPlotly({
         data <- currData()
         pdf(NULL)
-        session$sendCustomMessage(type='finishInit', NA)
         bankPlotly(data)
 })
 
