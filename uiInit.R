@@ -21,18 +21,18 @@ uiInit <- function(){
                                 $('.dropdown-menu').attr('class', 'dropdown-menu pull-right');
                                 $('a').filter(function(index) { return $(this).text() === \"", appTitle, "\"; }).css('display', 'none');
                                 $('a').filter(function(index) { return $(this).text() === \"hidden\"; }).css('display', 'none');
-                                $('.init-animation').fadeOut('slow');
+                                // $('.init-animation').fadeOut('slow');
                              });")),
                 tags$script(
                         'Shiny.addCustomMessageHandler("setPiaUrl", function(x) {      
                                 $("#returnPIAlink").attr("href", x);
                         })'
                 ),
-                tags$script(
-                        'Shiny.addCustomMessageHandler("finishInit", function(x) {  
-                                $(".init-animation").fadeOut("slow");
-                        })'
-                ),
+                # tags$script(
+                #         'Shiny.addCustomMessageHandler("finishInit", function(x) {  
+                #                 $(".init-animation").fadeOut("slow");
+                #         })'
+                # ),
                 tags$script(
                         'Shiny.addCustomMessageHandler("setDisplayButton", function(x) { 
                                 var id = "#" + x;
