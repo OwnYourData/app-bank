@@ -10,11 +10,9 @@ uiInit <- function(){
                                 var url = window.location.href;
                                 if(url.indexOf('PIA_URL=') == -1){
                                         if(localStorage['oydStore\\\\pia_url'] === undefined) {
-                                                $('.init-animation').fadeOut('slow');
                                                 $('#startConfig').modal('show');
                                         } else {
                                                 if(JSON.parse(localStorage['oydStore\\\\pia_url']).data === null) {
-                                                        $('.init-animation').fadeOut('slow');
                                                         $('#startConfig').modal('show');
                                                 }
                                         }
@@ -31,9 +29,9 @@ uiInit <- function(){
                 ),
                 tags$script(
                         'Shiny.addCustomMessageHandler("finishInit", function(x) {  
-                                //$(window).load(function(){
+                                $(window).load(function(){
                                         $(".init-animation").fadeOut("slow");
-                                //});
+                                });
                         })'
                 ),
                 tags$script(
