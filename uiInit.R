@@ -21,6 +21,7 @@ uiInit <- function(){
                                 $('.dropdown-menu').attr('class', 'dropdown-menu pull-right');
                                 $('a').filter(function(index) { return $(this).text() === \"", appTitle, "\"; }).css('display', 'none');
                                 $('a').filter(function(index) { return $(this).text() === \"hidden\"; }).css('display', 'none');
+                                $('.init-animation').fadeOut('slow');
                              });")),
                 tags$script(
                         'Shiny.addCustomMessageHandler("setPiaUrl", function(x) {      
@@ -29,9 +30,7 @@ uiInit <- function(){
                 ),
                 tags$script(
                         'Shiny.addCustomMessageHandler("finishInit", function(x) {  
-                                $(window).load(function(){
-                                        $(".init-animation").fadeOut("slow");
-                                });
+                                $(".init-animation").fadeOut("slow");
                         })'
                 ),
                 tags$script(
