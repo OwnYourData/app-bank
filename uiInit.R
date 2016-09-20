@@ -5,7 +5,7 @@ uiInit <- function(){
                             function avoidIdle() 
                                 { Shiny.onInputChange("myData", 0) }'
                 ),
-                tags$script(paste0(
+                tags$script(enc2native(paste0(
                         "$(window).load(function(){
                                 var url = window.location.href;
                                 if(url.indexOf('PIA_URL=') == -1){
@@ -22,7 +22,7 @@ uiInit <- function(){
                                 $('a').filter(function(index) { return $(this).text() === \"", appTitle, "\"; }).css('display', 'none');
                                 $('a').filter(function(index) { return $(this).text() === \"hidden\"; }).css('display', 'none');
                                 // $('.init-animation').fadeOut('slow');
-                             });")),
+                             });"))),
                 tags$script(
                         'Shiny.addCustomMessageHandler("setPiaUrl", function(x) {      
                                 $("#returnPIAlink").attr("href", x);
