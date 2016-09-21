@@ -14,7 +14,7 @@ appSource <- function(){
                                                 column(6,
                                                        selectInput('bankInstitute', 
                                                                    label = h4('Institut:'), 
-                                                                   choices = list(enc2utf8('auswählen ...')=enc2utf8('auswählen...'),
+                                                                   choices = list('auswählen ...'='auswählen...',
                                                                                   'Bank Austria'='ba',
                                                                                   'Bawag/Easybank'='easy',
                                                                                   'Erste Group'='erste',
@@ -58,8 +58,8 @@ appSource <- function(){
                                         br(),
                                         textInput('mailerReceiver', 'Emailadresse des Empfängers'),
                                         selectInput('mailerInterval', 'Versandintervall:', choices = list(
-                                                enc2utf8('auswählen...') = 1,
-                                                enc2native('täglich')      = 2,
+                                                'auswählen...' = 1,
+                                                'täglich'      = 2,
                                                 'wöchentlich'  = 3,
                                                 'monatlich'    = 4)),
                                         conditionalPanel(
