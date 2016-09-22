@@ -2,6 +2,9 @@ appStore <- function(){
         fluidRow(
                 column(12,
                        h3('Datenblatt'),
+                       # remove!!!
+                       htmlOutput('sysInfo'),
+                       # remove!!!
                        rHandsontableOutput('dataSheet'),
                        br(),
                        htmlOutput('dataSheetDirty', inline = TRUE),

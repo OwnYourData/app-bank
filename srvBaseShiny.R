@@ -13,29 +13,29 @@ currApp <- function(){
         if(is.null(pia_url) |
            is.null(app_key) | 
            is.null(app_secret)) {
-                piaMsg <- paste0('Es sind keine oder nur unvollständige Verbindungsdaten vorhanden. Wähle im Menü ',
+                piaMsg <- enc2utf8(paste0('Es sind keine oder nur unvollständige Verbindungsdaten vorhanden. Wähle im Menü ',
                                  icon('gear'),
-                                 ' rechts oben "Konfiguration" und trage die Verbindungsdaten zu deiner PIA ein!')
+                                 ' rechts oben "Konfiguration" und trage die Verbindungsdaten zu deiner PIA ein!'))
         } else {
                 if((nchar(pia_url) > 0) & 
                    (nchar(app_key) > 0) & 
                    (nchar(app_secret) > 0)) {
                         app <- setupApp(pia_url, app_key, app_secret)
                         if(length(app) == 0){
-                                piaMsg <- paste0('Die angegebenen Verbindungsdaten zur PIA sind nicht korrekt oder die PIA kann derzeit nicht erreicht werden. Öffne deine PIA und überprüfe hier im Menü ',
+                                piaMsg <- enc2native(paste0('Die angegebenen Verbindungsdaten zur PIA sind nicht korrekt oder die PIA kann derzeit nicht erreicht werden. Öffne deine PIA und überprüfe hier im Menü ',
                                                  icon('gear'),
-                                                 ' rechts oben "Konfiguration" die PIA-Verbindungsdaten.')
+                                                 ' rechts oben "Konfiguration" die PIA-Verbindungsdaten.'))
                         } else {
                                 if(is.na(app[['token']])){
-                                        piaMsg <- paste0('Die angegebenen Verbindungsdaten zur PIA sind nicht korrekt oder die PIA kann derzeit nicht erreicht werden. Öffne deine PIA und überprüfe hier im Menü ',
+                                        piaMsg <- enc2native(paste0('Die angegebenen Verbindungsdaten zur PIA sind nicht korrekt oder die PIA kann derzeit nicht erreicht werden. Öffne deine PIA und überprüfe hier im Menü ',
                                                          icon('gear'),
-                                                         ' rechts oben "Konfiguration" die PIA-Verbindungsdaten.')
+                                                         ' rechts oben "Konfiguration" die PIA-Verbindungsdaten.'))
                                 }
                         }
                 } else {
-                        piaMsg <- paste0('Es sind keine oder nur unvollständige Verbindungsdaten vorhanden. Wähle im Menü ',
+                        piaMsg <- enc2utf8(paste0('Es sind keine oder nur unvollständige Verbindungsdaten vorhanden. Wähle im Menü ',
                                          icon('gear'),
-                                         ' rechts oben "Konfiguration" und überprüfe die Verbindungsdaten zu deiner PIA!')
+                                         ' rechts oben "Konfiguration" und überprüfe die Verbindungsdaten zu deiner PIA!'))
                 }
         }
         

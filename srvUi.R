@@ -34,6 +34,12 @@ renderHdrImageLink <- function() {
         )
 }
 
+# remove!!!
+output$sysInfo <- renderUI({
+        as.character(sessionInfo()$locale)
+})
+# remove!!!
+
 observeEvent(input$buttonVisual, {
         session$sendCustomMessage(type='setDisplayButton', 
                                   'buttonVisual')
