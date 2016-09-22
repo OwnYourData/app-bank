@@ -56,7 +56,7 @@ bankPlotly <- function(data){
                         } else {
                                 createAlert(session, 'dataStatus', alertId = 'myDataStatus',
                                             style = 'warning', append = FALSE,
-                                            title = enc2utf8('Keine Daten im gewählten Zeitfenster'),
+                                            title = 'Keine Daten im gewählten Zeitfenster',
                                             content = 'Für das ausgewählte Zeitfenster sind keine Daten vorhanden.')
                                 plotly_empty()
                         }
@@ -96,7 +96,7 @@ csv_import <- function(){
         bankInstitute <- input$bankInstitute
         bankFile <- input$bankFile
         if (is.null(bankFile) | 
-            bankInstitute == enc2utf8('auswählen...')) {
+            bankInstitute == 'auswählen...') {
                 data.frame()  
         } else {
                 config <- list()
