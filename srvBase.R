@@ -17,11 +17,15 @@ itemsUrl <- function(url, repo_name) {
 # request token for a plugin (app)
 getToken <- function(pia_url, app_key, app_secret) {
         auth_url <- paste0(pia_url, '/oauth/token')
+        # reduce response timeout to 10s to avoid hanging app
+        # https://curl.haxx.se/libcurl/c/CURLOPT_CONNECTTIMEOUT.html
+        optTimeout <- curlOptions(connecttimeout = 10)
         response <- tryCatch(
                 postForm(auth_url,
                          client_id     = app_key,
                          client_secret = app_secret,
-                         grant_type    = 'client_credentials'),
+                         grant_type    = 'client_credentials',
+                         .opts         = optTimeout),
                 error = function(e) { return(NA) })
         if (is.na(response)) {
                 return(NA)
