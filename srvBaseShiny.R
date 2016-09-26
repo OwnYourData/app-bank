@@ -1,7 +1,7 @@
 # basic reactive functions for accessing PIA
 # last update:2016-08-24
 
-currApp <- function(){
+currApp <- reactive({
         app <- vector()
         piaMsg <- ''
         # pia_url <- input$store$pia_url
@@ -73,7 +73,7 @@ currApp <- function(){
                 }
         }
         app
-}
+})
 
 currData <- reactive({
         app <- currApp()
