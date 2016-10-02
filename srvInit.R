@@ -81,6 +81,33 @@ observe({
         }
 })
 
+output$connectError <- renderUI({
+        pia_url <- input$modalPiaUrl
+        app_key <- input$modalPiaId
+        app_secret <- input$modalPiaSecret
+        auth_url <- paste0(pia_url, '/oauth/token')
+        # reduce response timeout to 10s to avoid hanging app
+        # https://curl.haxx.se/libcurl/c/CURLOPT_CONNECTTIMEOUT.html
+        optTimeout <- curlOptions(connecttimeout = 10)
+        response <- tryCatch(
+                postForm(auth_url,
+                         client_id     = app_key,
+                         client_secret = app_secret,
+                         grant_type    = 'client_credentials',
+                         .opts         = optTimeout),
+                error = function(e) { return(paste('Error:', 
+                                                   as.character(e))) })
+        if (is.na(response)) {
+                'Error: no response'
+        } else {
+                if(jsonlite::validate(response)){
+                        ''
+                } else {
+                        response
+                }
+        }
+})
+
 observeEvent(input$p1next, ({
         updateCollapse(session, 'collapse',
                        open = 'PIA',

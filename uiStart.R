@@ -23,7 +23,9 @@ uiStart <- function(){
                                                                   condition = "output.currentToken != ''",
                                                                   actionButton('disconnectPIA', 'Verbindung zu PIA trennen', 
                                                                                icon('chain-broken'))
-                                                          )
+                                                          ),
+                                                          br(),
+                                                          uiOutput('connectError')
                                                    )
                                            ),
                                            br(),

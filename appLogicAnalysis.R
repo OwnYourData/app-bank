@@ -323,12 +323,10 @@ observeEvent(input$showGroupDetails, {
                 cfgItems <- cfgItems[selItems, ]
                 allItems <- do.call(rbind, apply(cfgItems, 1, getGroupItems))
                 itemDigest <- createDigest(allItems, appFields)
-                save(allItems, itemDigest, file='tmpDetail.RData')
                 allItems <- allItems[!duplicated(itemDigest$digest), ]
                 data <- as.matrix(allItems[, c('date', 'value', 'description')])
                 colnames(data) <- c('Datum', 'Betrag', 'Beschreibung')
                 rownames(data) <- 1:nrow(data)
-                #save(data, data1, cfgItems, selItems, allItems, file='tmpDetails.RData')
                 output$groupAnalysisDetailList <- DT::renderDataTable(datatable({
                         data
                 }, 
