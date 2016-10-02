@@ -6,7 +6,8 @@ uiStatusDateSelect <- function(){
                                       separator = ' bis ',
                                       format = 'dd.mm.yyyy',
                                       label = 'Zeitfenster',
-                                      start = Sys.Date() - 30, end = Sys.Date()
+                                      start = as.Date(Sys.Date() - months(6)), 
+                                      end = Sys.Date()
                         )
                 ),
                 column(4,

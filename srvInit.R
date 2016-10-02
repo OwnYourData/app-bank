@@ -1,16 +1,6 @@
 # functions for handling the initial dialog when starting the app
 # last update:2016-07-27
 
-observeEvent(input$p1next, ({
-        updateCollapse(session, 'collapse',
-                       open = 'PIA',
-                       style = list(
-                               "Willkommen" = 'info',
-                               'PIA' = 'primary',
-                               'Email' = 'info',
-                               'Fertig' = 'info'))
-}))
-
 observe({
         session$sendCustomMessage(type='setPiaUrl',
                                   input$store$pia_url)
@@ -34,7 +24,7 @@ observe({
                 appSecret <<- urlParams[['APP_SECRET']]
                 urlParamExist <- TRUE
         }
-
+        
         app <- setupApp(piaUrl, appKey, appSecret)
         if(urlParamExist){
                 updateStore(session, "pia_url", piaUrl)
@@ -62,8 +52,8 @@ observe({
                 })
                 output$mobileToken <- renderUI({
                         HTML(paste0('<hr>',
-                                   '<strong>Token:</strong> ', app[['token']],
-                                   '<br><br>'))
+                                    '<strong>Token:</strong> ', app[['token']],
+                                    '<br><br>'))
                 })
                 piaMailConfig <- getPiaEmailConfig(app)
                 if(!is.null(nrow(piaMailConfig))){
@@ -90,6 +80,16 @@ observe({
                 output$mobileToken <- renderText('')
         }
 })
+
+observeEvent(input$p1next, ({
+        updateCollapse(session, 'collapse',
+                       open = 'PIA',
+                       style = list(
+                               "Willkommen" = 'info',
+                               'PIA' = 'primary',
+                               'Email' = 'info',
+                               'Fertig' = 'info'))
+}))
 
 observeEvent(input$mobilePiaSave, ({
         updateStore(session, "pia_url", isolate(input$pia_urlMobile))

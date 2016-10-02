@@ -68,10 +68,14 @@ observeEvent(input$dateRange, {
         }
 })
 
-currDataSelect <- function(){
+currDataSelect <- reactive({
         data <- currData()
         if(nrow(data) == 0) {
-                data.frame()
+                createAlert(session, 'dataStatus', alertId = 'myDataStatus',
+                            style = 'warning', append = FALSE,
+                            title = 'Keine Daten im gewählten Zeitfenster',
+                            content = 'Für das ausgewählte Zeitfenster sind keine Daten vorhanden.')
+                data <- data.frame()
         } else {
                 data$dat <- as.POSIXct(data$date, 
                                        format='%Y-%m-%d')
@@ -80,6 +84,10 @@ currDataSelect <- function(){
                 curMin <- as.Date(input$dateRange[1], '%d.%m.%Y')
                 curMax <- as.Date(input$dateRange[2], '%d.%m.%Y')
                 daterange <- seq(curMin, curMax, 'days')
-                data[as.Date(data$dat) %in% daterange, ]
+                data <- data[as.Date(data$dat) %in% daterange, ]
+                if(nrow(data)>0){
+                        closeAlert(session, 'myDataStatus')
+                }
         }
-}
+        data
+})

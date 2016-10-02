@@ -9,6 +9,7 @@ library(dplyr)
 library(tidyr)
 library(lubridate)
 library(rhandsontable)  # https://github.com/jrowen/rhandsontable
+library(DT)
 #library(sqldf)
 library(stringi)
 library(digest)

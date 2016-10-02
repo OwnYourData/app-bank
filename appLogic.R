@@ -1,86 +1,54 @@
 # application specific logic
-# last update:2016-09-12
+# last update:2016-09-28
 
 source('oyd_dateselect.R', local=TRUE)
 source('oyd_email.R', local=TRUE)
 source('appLogicBankImport.R', local=TRUE)
 
-bankPlotly <- function(data){
-        closeAlert(session, 'myDataStatus')
-        if(nrow(data) > 0){
-                mymin <- as.Date(input$dateRange[1], "%d.%m.%Y")
-                mymax <- as.Date(input$dateRange[2], "%d.%m.%Y")
-                if(mymax > mymin){
-                        daterange <- seq(mymin, mymax, "days")
-                        data$dat <- as.Date(data$date)
-                        data <- data[order(data[, 'dat']),]
-                        data <- data[data$dat %in% daterange, ]
-                        if(nrow(data) > 0){
-                                #euro <- dollar_format(prefix = "\u20ac ", suffix = "")
-                                # all data until reference value
-                                app <- currApp()
-                                url <- itemsUrl(app[['url']], paste0(app[['app_key']],
-                                                                     '.reference'))
-                                refData <- readItems(app, url)
-                                if(nrow(refData) == 1){
-                                        subData <- data[as.Date(as.character(data$date)) < as.Date(refData$date), ]
-                                        startValue <- refData$value - sum(subData$value)
-                                        minDate <- min(data$dat)
-                                        refRow <- data.frame(as.character(as.Date(minDate)-1),
-                                                    'Startbetrag',
-                                                    -1,
-                                                    startValue,
-                                                    'Starbetrag',
-                                                    as.Date(minDate)-1)
-                                        colnames(refRow) <- colnames(data)
-                                        data <- rbind(refRow, data)
-                                }
-                                data$cumsum <- cumsum(data$value)
-                                gg <- ggplot(data, 
-                                             aes(x=dat, y=cumsum, 
-                                                 text=paste0(
-                                                         #format(dat, '%A, %d %b %Y'),
-                                                         format(dat, '%d.%m.%Y'),
-                                                         ': \u20ac ',
-                                                         formatC(as.numeric(value), format='f', digits=2, big.mark=','), 
-                                                         '<br>',
-                                                         description
-                                                 ))) + #label=paste0('Betrag:<br>',description), 
-                                        scale_y_continuous(labels=dollar_format(prefix="€")) + 
-                                        xlab('') +
-                                        ylab('') +
-                                        geom_line(group=1) + 
-                                        geom_point() + 
-                                        theme_bw()
-                                ggplotly(gg, tooltip=c('text'))
-                        } else {
-                                createAlert(session, 'dataStatus', alertId = 'myDataStatus',
-                                            style = 'warning', append = FALSE,
-                                            title = 'Keine Daten im gewählten Zeitfenster',
-                                            content = 'Für das ausgewählte Zeitfenster sind keine Daten vorhanden.')
-                                plotly_empty()
-                        }
-                } else {
-                        createAlert(session, 'dataStatus', alertId = 'myDataStatus',
-                                    style = 'warning', append = FALSE,
-                                    title = 'Ungültiges Zeitfenster',
-                                    content = 'Im ausgewählten Zeitfenster liegt das End-Datum vor dem Beginn-Datum. Korriege die Eingabe!')
-                        plotly_empty()
-                }
-        } else {
-                createAlert(session, 'dataStatus', alertId = 'myDataStatus',
-                            style = 'warning', append = FALSE,
-                            title = 'Keine Daten in der PIA vorhanden',
-                            content = 'Derzeit sind noch keine Daten in der PIA erfasst. Wechsle zu "Datenquellen" und importiere Kontodaten oder richte auch gleich ein Erinnerungsmail ein!')
-                plotly_empty()
-        }
-}
+source('appLogicChart.R', local = TRUE)
+source('appLogicAnalysis.R', local = TRUE)
+
 
 output$bankPlot <- renderPlotly({
         data <- currData()
-        pdf(NULL)
         bankPlotly(data)
 })
+
+output$groupAnalysis <- DT::renderDataTable(datatable({
+        grpConfigList <<- collectGrpConfigItems()
+        grpConfigUiList <<- rownames(grpConfigList)
+        updateSelectInput(session, 'grpConfigList', choices = grpConfigUiList)
+        t(apply(grpConfigList, 1, calcGroupAnalysis))
+}, options = list(language = list(url = '//cdn.datatables.net/plug-ins/1.10.11/i18n/German.json'))) 
+%>% formatCurrency(c('Summe', 'Durchschnitt', 'Min', 'Max'), currency = "\U20AC", interval = 3, mark = ",", digits=2)
+)
+
+output$groupChart <- renderPlot({
+        renderGroupChart()
+})
+
+# output$groupChart <- renderPlotly({
+#         pdf(NULL)
+#         outputPlot <- plotly_empty()
+#         grpConfigList <<- collectGrpConfigItems()
+#         data <- data.frame(t(apply(grpConfigList, 1, calcGroupAnalysis)))
+#         selItems <- input$groupAnalysis_rows_selected
+#         if(!is.null(selItems)){
+#                 data <- data[selItems, ]
+#                 if(nrow(data) > 0){
+#                         data <- data[!is.na(data$Summe), ]
+#                         if(nrow(data) > 0){
+#                                 data$Summe <- abs(as.numeric(data$Summe))
+#                                 data$name <- rownames(data)
+#                                 data <- data[, c('name', 'Summe')]
+#                                 pdf(NULL)
+#                                 outputPlot <- plot_ly(data, labels = name, values = Summe, type = "pie", hole = 0.5, showlegend = F)
+#                         }
+#                 }
+#         }
+#         dev.off()
+#         outputPlot
+# })
 
 output$mobileBankPlot <- renderPlot({
         data <- currData()
@@ -137,6 +105,13 @@ observeEvent(input$bankImport, {
         createPiaData <- data.frame()
         if(length(all.equal(app, logical(0)))>1){
                 piaData <- currData()
+                piaData$description <- as.character(piaData$description)
+                if(nrow(piaData) > 0) {
+                        Encoding(piaData$description) <- "UTF-8"
+                }
+                if(nrow(importData) > 0){
+                        Encoding(importData$description) <- "UTF-8"
+                }
                 url <- itemsUrl(app[['url']], app[['app_key']])
                 
                 importDigest <- createDigest(importData, appFields)
@@ -162,8 +137,13 @@ observeEvent(input$bankImport, {
                                              }
                                      })
                 }
-                output$bankImportInfo <- renderUI(paste0(nrow(createPiaData), 
-                                                         ' Datensätze wurden importiert'))
+                createAlert(session, 'taskInfo', 'successImport',
+                            style = 'success', append = TRUE,
+                            title = 'Kontodaten Import',
+                            content = paste0(nrow(createPiaData), 
+                                            ' Datensätze wurden importiert'))
+                # output$bankImportInfo <- renderUI(paste0(nrow(createPiaData), 
+                #                                          ' Datensätze wurden importiert'))
                 data <- data.frame()
                 if(nrow(piaData) > 0){
                         if(nrow(createPiaData) > 0) {
@@ -194,11 +174,15 @@ observeEvent(input$bankImport, {
                         if(nrow(DF)>20) {
                                 rhandsontable(DF, useTypes=TRUE, height=400) %>%
                                         hot_table(highlightCol=TRUE, highlightRow=TRUE,
-                                                  allowRowEdit=TRUE)
+                                                  allowRowEdit=TRUE) %>%
+                                        hot_col('Betrag', width=80) %>%
+                                        hot_col('Beschreibung', width=600)
                         } else {
                                 rhandsontable(DF, useTypes=TRUE) %>%
                                         hot_table(highlightCol=TRUE, highlightRow=TRUE,
-                                                  allowRowEdit=TRUE)
+                                                  allowRowEdit=TRUE) %>%
+                                        hot_col('Betrag', width=80) %>%
+                                        hot_col('Beschreibung', width=600)
                         }
                 })
         }        
@@ -224,7 +208,7 @@ observeEvent(input$bankInstitute, {
                                         value = 'ISO-8859-1')
                         updateTextInput(session,
                                         'bankImportDescEnc',
-                                        value = 'latin1')
+                                        value = 'ISO-8859-1')
                         updateTextInput(session,
                                         'bankImportDateFormat',
                                         value = '%d.%m.%Y')

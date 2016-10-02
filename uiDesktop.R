@@ -28,7 +28,8 @@ uiDesktop <- function(){
                                          column(10,
                                                 tagList(
                                                         bsAlert('urlStatus'),
-                                                        bsAlert('piaStatus'))
+                                                        bsAlert('piaStatus'),
+                                                        bsAlert('taskInfo'))
                                          )
                                  ),
                                  uiApp()

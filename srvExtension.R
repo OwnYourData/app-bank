@@ -1,10 +1,6 @@
 # extension handling for Status and Source tab
 # last update:2016-08-11
 
-# # constants
-# tmpFilename <- 'oyd_extensionSetup.R'
-# tabUiConfig <- readChar(tmpFilename, file.info(tmpFilename)$size)
-
 # get stored extensions
 readExtItems <- function(app){
         if(missing(app)){

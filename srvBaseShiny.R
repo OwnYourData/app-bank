@@ -76,6 +76,7 @@ currApp <- reactive({
 })
 
 currData <- reactive({
+        input$bankImport
         app <- currApp()
         if(length(app) > 0) {
                 url <- itemsUrl(app[['url']], 

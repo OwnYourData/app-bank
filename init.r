@@ -36,3 +36,4 @@ invisible(sapply(my_packages, install_if_missing))
 
 library(devtools)
 install_github("trestletech/shinyStore")
+install_github('rstudio/DT')

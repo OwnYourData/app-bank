@@ -28,6 +28,19 @@ uiInit <- function(){
                                 $("#returnPIAlink").attr("href", x);
                         })'
                 ),
+                # tags$script(HTML(
+                #         'Shiny.addCustomMessageHandler("toggleGroupChart", function(x) {
+                #                 if($("#groupTableID").attr("class") == "col-sm-12"){
+                #                         $("#groupTableID").attr("class", "col-sm-7");
+                #                         $("#groupChartID").show();
+                #                         $("#showGroupComparison").html("<i class=\'fa fa-pie-chart\'></i> Vergleich ausblenden");
+                #                 } else {
+                #                         $("#groupChartID").hide();
+                #                         $("#groupTableID").attr("class", "col-sm-12");
+                #                         $("#showGroupComparison").html("<i class=\'fa fa-pie-chart\'></i> Auswahl vergleichen");
+                #                 }
+                #         })'
+                # )),
                 # tags$script(
                 #         'Shiny.addCustomMessageHandler("finishInit", function(x) {  
                 #                 $(".init-animation").fadeOut("slow");

@@ -110,11 +110,15 @@ observeEvent(input$saveSheet, {
                         if(nrow(DF)>20) {
                                 rhandsontable(DF, useTypes=TRUE, height=400) %>%
                                         hot_table(highlightCol=TRUE, highlightRow=TRUE,
-                                                  allowRowEdit=TRUE)
+                                                  allowRowEdit=TRUE) %>%
+                                        hot_col('Betrag', width=80) %>%
+                                        hot_col('Beschreibung', width=600)
                         } else {
                                 rhandsontable(DF, useTypes=TRUE) %>%
                                         hot_table(highlightCol=TRUE, highlightRow=TRUE,
-                                                  allowRowEdit=TRUE)
+                                                  allowRowEdit=TRUE) %>%
+                                        hot_col('Betrag', width=80) %>%
+                                        hot_col('Beschreibung', width=600)
                         }
                 })  
         }
@@ -136,11 +140,15 @@ observeEvent(input$mobileSaveSheet, {
                         if(nrow(DF)>20) {
                                 rhandsontable(DF, useTypes=TRUE, height=400) %>%
                                         hot_table(highlightCol=TRUE, highlightRow=TRUE,
-                                                  allowRowEdit=TRUE)
+                                                  allowRowEdit=TRUE) %>%
+                                        hot_col('Betrag', width=80) %>%
+                                        hot_col('Beschreibung', width=600)
                         } else {
                                 rhandsontable(DF, useTypes=TRUE) %>%
                                         hot_table(highlightCol=TRUE, highlightRow=TRUE,
-                                                  allowRowEdit=TRUE)
+                                                  allowRowEdit=TRUE) %>%
+                                        hot_col('Betrag', width=80) %>%
+                                        hot_col('Beschreibung', width=600)
                         }
                 })  
         }
@@ -148,11 +156,13 @@ observeEvent(input$mobileSaveSheet, {
 })
 
 hot_dat2DF <- function(data, orderDecreasing){
+        DF <- data.frame()
         if(nrow(data)>0){
                 data <- data[, appFields]
                 data <- data[!is.na(data[appFieldKey]),]
                 DF <- rbind(data, rep(NA, length(appFields)))
-        } else {
+        }
+        if(nrow(data)==0){
                 initVal <- vector()
                 for(i in 1:length(appFields)){
                         switch(appFieldInits[i],
@@ -222,11 +232,15 @@ output$dataSheet = renderRHandsontable({
         if(nrow(DF)>20) {
                 rhandsontable(DF, useTypes=TRUE, height=400) %>%
                         hot_table(highlightCol=TRUE, highlightRow=TRUE,
-                                  allowRowEdit=TRUE)
+                                  allowRowEdit=TRUE) %>%
+                        hot_col('Betrag', width=80) %>%
+                        hot_col('Beschreibung', width=600)
         } else {
                 rhandsontable(DF, useTypes=TRUE) %>%
                         hot_table(highlightCol=TRUE, highlightRow=TRUE,
-                                  allowRowEdit=TRUE)
+                                  allowRowEdit=TRUE) %>%
+                        hot_col('Betrag', width=80) %>%
+                        hot_col('Beschreibung', width=600)
         }
 })
 
@@ -252,11 +266,15 @@ output$mobileDataSheet = renderRHandsontable({
         if(nrow(DF)>20) {
                 rhandsontable(DF, useTypes=TRUE, height=400) %>%
                         hot_table(highlightCol=TRUE, highlightRow=TRUE,
-                                  allowRowEdit=TRUE)
+                                  allowRowEdit=TRUE) %>%
+                        hot_col('Betrag', width=80) %>%
+                        hot_col('Beschreibung', width=600)
         } else {
                 rhandsontable(DF, useTypes=TRUE) %>%
                         hot_table(highlightCol=TRUE, highlightRow=TRUE,
-                                  allowRowEdit=TRUE)
+                                  allowRowEdit=TRUE) %>%
+                        hot_col('Betrag', width=80) %>%
+                        hot_col('Beschreibung', width=600)
         }
 })
 
