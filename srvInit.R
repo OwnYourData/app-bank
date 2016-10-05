@@ -95,8 +95,7 @@ output$connectError <- renderUI({
                          client_secret = app_secret,
                          grant_type    = 'client_credentials',
                          .opts         = optTimeout),
-                error = function(e) { return(paste('Error:', 
-                                                   as.character(e))) })
+                error = function(e) { return(as.character(e)) })
         if (is.na(response)) {
                 'Error: no response'
         } else {
