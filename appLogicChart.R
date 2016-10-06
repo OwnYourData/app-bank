@@ -28,8 +28,8 @@ bankPlotly <- function(data){
                                                              'Startbetrag',
                                                              -1,
                                                              startValue,
-                                                             'Starbetrag',
                                                              as.Date(minDate)-1)
+                                        data <- data[, c('date', 'description', 'id', 'value', 'dat')]
                                         colnames(refRow) <- colnames(data)
                                         data <- rbind(refRow, data)
                                 }

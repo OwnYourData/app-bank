@@ -30,7 +30,11 @@ getToken <- function(pia_url, app_key, app_secret) {
         if (is.na(response)) {
                 return(NA)
         } else {
-                return(fromJSON(response[1])$access_token)
+                if(jsonlite::validate(response[1])){
+                        return(fromJSON(response[1])$access_token)
+                } else {
+                        return(NA)
+                }
         }
 }
 

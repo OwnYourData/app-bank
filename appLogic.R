@@ -406,10 +406,10 @@ observeEvent(input$saveReference, {
         refData <- readItems(app, url)
         if(nrow(refData) > 0){
                 retVal <- updateItem(app, url, data, refData$id)
-                output$saveReferenceInfo <- renderUI('Referenzwert aktualisiert')
+                output$saveReferenceInfo <- renderUI({'Referenzwert aktualisiert'})
         } else {
                 retVal <- writeItem(app, url, data)
-                output$saveReferenceInfo <- renderUI('Referenzwert gespeichert')
+                output$saveReferenceInfo <- renderUI({'Referenzwert gespeichert'})
         }
         
 })
