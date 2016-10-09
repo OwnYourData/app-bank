@@ -15,11 +15,7 @@ preserveDate <- function(data){
 
 preserveUTF8 <- function(data){
         d <- as.list(data)
-        if(all.equal(
-                as.character(lapply(d[appFieldTypes == 'string'], 
-                                    function(x) Encoding(x[[1]]))),
-                rep('UTF-8', length(d[appFieldTypes == 'string'])))
-           > 1){
+        if(length(all.equal(app, logical(0)))>1){
                 for(i in 1:length(d)){
                         if(appFieldTypes[i] == 'string'){
                                 d[i] <- iconv(as.character(d[i][[1]]),
