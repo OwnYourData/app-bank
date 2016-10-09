@@ -1,112 +1,116 @@
+# layout for the body of the app
+# last update:2016-10-06
+
 source('appStatus.R')
 source('appSource.R')
 source('appStore.R')
 
-buildTabList <- function(allItems, viewName, group){
-        paste(
-                lapply(
-                        allItems,
-                        function(x)
-                                paste0(
-                                        x,
-                                        "UI('",
-                                        viewName,
-                                        group,
-                                        'Items',
-                                        x,
-                                        "')")
-                ),
-                collapse = ', '
-        )
-}
-
-singleUiCodeStr <- function(name, uiCode){
-        paste0(
-                name,
-                "UI <- function(id){\n ",
-                "ns <- NS(id)\n ",
-                uiCode,
-                "}")
-}
-
-buildUiCodeStr <- function(allItems){
-        paste(
-                apply(
-                        allItems,
-                        2,
-                        function(x) 
-                                singleUiCodeStr(x['allItemsName'],
-                                                x['allItemsUI'])
-                )
-        )
-}
-
-singleServerLogicstr <- function(name, serverLogic){
-        paste0(
-                name,
-                " <- function(input,output,session){\n",
-                serverLogic,
-                "}")
-}
-
-buildServerLogicStr <- function(allItems){
-        paste(
-                apply(
-                        allItems,
-                        2,
-                        function(x)
-                                singleServerLogicstr(x['allItemsName'],
-                                                     x['allItemsLogic'])
-                ),
-                collapse = '\n '
-        )
-}
-
-singleCallModuleStr <- function(name, group){
-        if(group == 'Status'){
-                paste0(
-                        "dummy <- callModule(",
-                        name,
-                        ", 'desktopStatusItems",
-                        name,
-                        "')\n ",
-                        "dummy <- callModule(",
-                        name,
-                        ", 'mobileStatusItems",
-                        name,
-                        "')")
-        } else {
-                paste0(
-                        "dummy <- callModule(",
-                        name,
-                        ", 'desktopSourceItems",
-                        name,
-                        "')")
-        }
-}
-
-checkAllItems <- function(allItems, group){
-        apply(
-                allItems,
-                2,
-                function(x){
-                        uiCodeStr <- singleUiCodeStr(x['allItemsName'],
-                                                     x['allItemsUI'])
-                        eval(parse(text = uiCodeStr), 
-                             envir=.GlobalEnv)
-                        serverLogicStr <- singleServerLogicstr(
-                                x['allItemsName'],
-                                x['allItemsLogic']
-                        )
-                        eval(parse(text = serverLogicStr), 
-                             envir=.GlobalEnv)
-                        callModuleStr <- singleCallModuleStr(
-                                x['allItemsName'], group)
-                        eval(parse(text = callModuleStr), 
-                             envir=.GlobalEnv)
-                }
-        )
-}    
+# Code for dynamic Tabs
+# buildTabList <- function(allItems, viewName, group){
+#         paste(
+#                 lapply(
+#                         allItems,
+#                         function(x)
+#                                 paste0(
+#                                         x,
+#                                         "UI('",
+#                                         viewName,
+#                                         group,
+#                                         'Items',
+#                                         x,
+#                                         "')")
+#                 ),
+#                 collapse = ', '
+#         )
+# }
+# 
+# singleUiCodeStr <- function(name, uiCode){
+#         paste0(
+#                 name,
+#                 "UI <- function(id){\n ",
+#                 "ns <- NS(id)\n ",
+#                 uiCode,
+#                 "}")
+# }
+# 
+# buildUiCodeStr <- function(allItems){
+#         paste(
+#                 apply(
+#                         allItems,
+#                         2,
+#                         function(x) 
+#                                 singleUiCodeStr(x['allItemsName'],
+#                                                 x['allItemsUI'])
+#                 )
+#         )
+# }
+# 
+# singleServerLogicstr <- function(name, serverLogic){
+#         paste0(
+#                 name,
+#                 " <- function(input,output,session){\n",
+#                 serverLogic,
+#                 "}")
+# }
+# 
+# buildServerLogicStr <- function(allItems){
+#         paste(
+#                 apply(
+#                         allItems,
+#                         2,
+#                         function(x)
+#                                 singleServerLogicstr(x['allItemsName'],
+#                                                      x['allItemsLogic'])
+#                 ),
+#                 collapse = '\n '
+#         )
+# }
+# 
+# singleCallModuleStr <- function(name, group){
+#         if(group == 'Status'){
+#                 paste0(
+#                         "dummy <- callModule(",
+#                         name,
+#                         ", 'desktopStatusItems",
+#                         name,
+#                         "')\n ",
+#                         "dummy <- callModule(",
+#                         name,
+#                         ", 'mobileStatusItems",
+#                         name,
+#                         "')")
+#         } else {
+#                 paste0(
+#                         "dummy <- callModule(",
+#                         name,
+#                         ", 'desktopSourceItems",
+#                         name,
+#                         "')")
+#         }
+# }
+# 
+# checkAllItems <- function(allItems, group){
+#         apply(
+#                 allItems,
+#                 2,
+#                 function(x){
+#                         uiCodeStr <- singleUiCodeStr(x['allItemsName'],
+#                                                      x['allItemsUI'])
+#                         eval(parse(text = uiCodeStr), 
+#                              envir=.GlobalEnv)
+#                         serverLogicStr <- singleServerLogicstr(
+#                                 x['allItemsName'],
+#                                 x['allItemsLogic']
+#                         )
+#                         eval(parse(text = serverLogicStr), 
+#                              envir=.GlobalEnv)
+#                         callModuleStr <- singleCallModuleStr(
+#                                 x['allItemsName'], group)
+#                         eval(parse(text = callModuleStr), 
+#                              envir=.GlobalEnv)
+#                 }
+#         )
+# }    
 
 uiApp <- function(){
          fluidRow(

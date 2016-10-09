@@ -1,4 +1,7 @@
-# constants for every App
+# global constants available to the app
+# last update:2016-10-06
+
+# constants required for every App
 appName <- 'bank'
 appTitle <- 'Kontoentwicklung'
 app_id <- 'eu.ownyourdata.bank'
@@ -8,6 +11,7 @@ appFieldTypes <- c('date', 'double', 'string')
 appFieldInits <- c('today', 'zero', 'empty')
 appFieldKey <- 'date'
 appFieldsDisplay <- c('Datum', 'Betrag', 'Beschreibung')
+appFieldsDisplayWidth <- c(100, 80, 600)
 
 # Version information
 currVersion <- "0.5.0"

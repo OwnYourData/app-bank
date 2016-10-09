@@ -1,5 +1,5 @@
 # functions required in the Store tab
-# last update:2016-07-28
+# last update: 2016-10-07
 
 source('srvSheet.R', local=TRUE)
 
@@ -18,22 +18,3 @@ observe({
                 updateStore(session, "app_secret", isolate(input$app_secret))
         }
 })
-
-# display current token
-output$current_token <- renderText({
-        app <- currApp()
-        if (length(app) == 0) {
-                '<strong>Token:</strong> nicht verfügbar'
-        } else {
-                paste0('<strong>Token:</strong><br><small>', 
-                       app[['token']], '</small>')
-        }
-})
-
-# display number of records in (main) repository
-output$curr_records <- renderText({
-        data <- currData()
-        paste('<strong>Datensätze:</strong>',
-              nrow(data))
-})
-

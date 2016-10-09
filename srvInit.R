@@ -1,5 +1,5 @@
 # functions for handling the initial dialog when starting the app
-# last update:2016-07-27
+# last update: 2016-07-27
 
 observe({
         session$sendCustomMessage(type='setPiaUrl',
@@ -86,7 +86,7 @@ output$connectError <- renderUI({
         app_key <- input$modalPiaId
         app_secret <- input$modalPiaSecret
         auth_url <- paste0(pia_url, '/oauth/token')
-        # reduce response timeout to 10s to avoid hanging app
+        # reduce response timeout to 30s to avoid hanging app
         # https://curl.haxx.se/libcurl/c/CURLOPT_CONNECTTIMEOUT.html
         optTimeout <- curlOptions(connecttimeout = 30)
         response <- tryCatch(
@@ -182,10 +182,9 @@ observeEvent(input$p2next, ({
         appKey <<- isolate(input$modalPiaId)
         appSecret <<- isolate(input$modalPiaSecret)
         
-        # for re-rendering BEGIN -----
         token <- getToken(piaUrl, appKey, appSecret)
         if(is.na(token)){
-                createAlert(session, 'piaStatus', alertId = 'myPiaStatus', 
+                createAlert(session, 'piaStatus', alertId = 'myPiaStatus',
                             style = 'danger', append = FALSE,
                             title = 'PIA Verbindung',
                             content = paste0('Es sind keine oder nur unvollständige Verbindungsdaten vorhanden. Wähle im Menü ',
@@ -194,25 +193,26 @@ observeEvent(input$p2next, ({
         } else {
                 closeAlert(session, 'myPiaStatus')
         }
-        myApp <- setupApp(piaUrl, appKey, appSecret)
-        allItems <- collectItems(defaultStatTabsName,
-                                 defaultStatTabsUI,
-                                 defaultStatTabsLogic,
-                                 'status',
-                                 myApp)
-        output$extStatusItemError <- renderUI({ '' })
-        statTabUiList <<- allItems['allItemsName', ]
-        updateSelectInput(session, 'extStatusList', 
-                          choices = statTabUiList)
-        checkAllItems(allItems, 'Status')
-        headerStr <- "tabsetPanel(type='tabs', "
-        footerStr <- ", uiStatusItemConfig())"
-        outputStr <- extRenderStr(allItems['allItemsName',], 
-                                  headerStr, footerStr, 'desktop', 'Status')
-        output$desktopUiStatusItemsRender <- renderUI({
-                eval(parse(text = outputStr), envir=.GlobalEnv)
-        })
-        # for re-rendering END -----
+        # for re-rendering BEGIN -----
+        # myApp <- setupApp(piaUrl, appKey, appSecret)
+        # allItems <- collectItems(defaultStatTabsName,
+        #                          defaultStatTabsUI,
+        #                          defaultStatTabsLogic,
+        #                          'status',
+        #                          myApp)
+        # output$extStatusItemError <- renderUI({ '' })
+        # statTabUiList <<- allItems['allItemsName', ]
+        # updateSelectInput(session, 'extStatusList', 
+        #                   choices = statTabUiList)
+        # checkAllItems(allItems, 'Status')
+        # headerStr <- "tabsetPanel(type='tabs', "
+        # footerStr <- ", uiStatusItemConfig())"
+        # outputStr <- extRenderStr(allItems['allItemsName',], 
+        #                           headerStr, footerStr, 'desktop', 'Status')
+        # output$desktopUiStatusItemsRender <- renderUI({
+        #         eval(parse(text = outputStr), envir=.GlobalEnv)
+        # })
+        # # for re-rendering END -----
         
         updateCollapse(session, 'collapse',
                        open = 'Email',

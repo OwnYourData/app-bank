@@ -1,3 +1,6 @@
+# top-level framework for desktop version
+# last update:2016-10-06
+
 source('uiStart.R')
 source('uiApp.R')
 source('uiMenu.R')
@@ -5,6 +8,7 @@ source('uiFooter.R')
 
 uiDesktop <- function(){
         tagList(
+                # Code for initial "Wait"-Animation
                 # tags$head(tags$script(src='http://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.2/modernizr.js')),
                 # tags$head(tags$link(rel='stylesheet', type='text/css', href='init_anim.css')),
                 # tags$div(class='init-animation'),

@@ -1,13 +1,15 @@
 # show available data in an Excel like UI
-# last update:2016-07-28
+# last update: 2016-07-28
 
 values = reactiveValues()
 setHot = function(x) values[["dataSheet"]] = x
 
 preserveDate <- function(data){
         d <- as.list(data)
-        d[appFieldTypes == 'date'] <- 
-                as.character(d[appFieldTypes == 'date'][[1]])
+        if('date' %in% appFieldTypes){
+                d[appFieldTypes == 'date'] <- 
+                        as.character(d[appFieldTypes == 'date'][[1]])
+        }
         d
 }
 
@@ -41,9 +43,11 @@ bulkUpdateItems <- function(sheetData){
                 sheetDigest <- createDigest(sheetData, appFields)
                 piaDigest <- createDigest(piaData, appFields)
                 removePiaData <- 
-                        piaData[!(piaDigest$digest %in% sheetDigest$digest), ]
+                        piaData[!(piaDigest$digest %in% sheetDigest$digest), , 
+                                drop=FALSE]
                 createPiaData <- 
-                        sheetData[!(sheetDigest$digest %in% piaDigest$digest), ]
+                        sheetData[!(sheetDigest$digest %in% piaDigest$digest), , 
+                                  drop=FALSE]
                 recCnt <- nrow(removePiaData) + nrow(createPiaData)
                 if(recCnt > 0){
                         withProgress(message='Daten aktualisieren', 
@@ -63,9 +67,9 @@ bulkUpdateItems <- function(sheetData){
                                              if(nrow(createPiaData) > 0){
                                                      for(i in 1:nrow(createPiaData)){
                                                              cnt <- cnt + 1
-                                                             myTmp <- createPiaData[i, appFields]
+                                                             myTmp <- createPiaData[i, appFields, drop=FALSE]
                                                              dataItem <- preserveUTF8(preserveDate(
-                                                                     createPiaData[i, appFields]))
+                                                                     createPiaData[i, appFields, drop=FALSE]))
                                                              dataItem <- appData(dataItem)
                                                              writeItem(app, url, dataItem)
                                                              setProgress(value=cnt,
@@ -73,7 +77,7 @@ bulkUpdateItems <- function(sheetData){
                                                                                        ' Datensätze'))
                                                      }
                                              }
-                        })
+                                     })
                 }
         }
 }
@@ -94,32 +98,33 @@ observe({
         }
 })
 
-
+rhotRender <- function(DF){
+        # write data to Hot
+        setHot(DF)
+        # nice formatting
+        if(nrow(DF)>20) {
+                rhandsontable(DF, useTypes=TRUE, height=400) %>%
+                        hot_table(highlightCol=TRUE, highlightRow=TRUE,
+                                  allowRowEdit=TRUE) %>%
+                        hot_cols(colWidths=appFieldsDisplayWidth)
+        } else {
+                rhandsontable(DF, useTypes=TRUE) %>%
+                        hot_table(highlightCol=TRUE, highlightRow=TRUE,
+                                  allowRowEdit=TRUE) %>%
+                        hot_cols(colWidths=appFieldsDisplayWidth)
+        }
+}
 observeEvent(input$saveSheet, {
         sheetRecords <- values[["dataSheet"]]
         if (!is.null(sheetRecords)) {
                 colnames(sheetRecords) <- appFields
-                sheetRecords <- sheetRecords[!is.na(sheetRecords[appFieldKey]),]
+                sheetRecords <- 
+                        sheetRecords[!is.na(sheetRecords[appFieldKey]), , 
+                                     drop=FALSE]
                 data <- bulkUpdateItems(sheetRecords)
                 output$dataSheet <- renderRHandsontable({
                         suppressWarnings(DF <- hot_dat2DF(sheetRecords, TRUE))
-                        
-                        # write data to Hot
-                        setHot(DF)
-                        # nice formatting
-                        if(nrow(DF)>20) {
-                                rhandsontable(DF, useTypes=TRUE, height=400) %>%
-                                        hot_table(highlightCol=TRUE, highlightRow=TRUE,
-                                                  allowRowEdit=TRUE) %>%
-                                        hot_col('Betrag', width=80) %>%
-                                        hot_col('Beschreibung', width=600)
-                        } else {
-                                rhandsontable(DF, useTypes=TRUE) %>%
-                                        hot_table(highlightCol=TRUE, highlightRow=TRUE,
-                                                  allowRowEdit=TRUE) %>%
-                                        hot_col('Betrag', width=80) %>%
-                                        hot_col('Beschreibung', width=600)
-                        }
+                        rhotRender(DF)
                 })  
         }
         output$dataSheetDirty <- renderText('')
@@ -133,23 +138,7 @@ observeEvent(input$mobileSaveSheet, {
                 data <- bulkUpdateItems(sheetRecords)        
                 output$mobileDataSheet <- renderRHandsontable({
                         suppressWarnings(DF <- hot_dat2DF(sheetRecords, TRUE))
-                        
-                        # write data to Hot
-                        setHot(DF)
-                        # nice formatting
-                        if(nrow(DF)>20) {
-                                rhandsontable(DF, useTypes=TRUE, height=400) %>%
-                                        hot_table(highlightCol=TRUE, highlightRow=TRUE,
-                                                  allowRowEdit=TRUE) %>%
-                                        hot_col('Betrag', width=80) %>%
-                                        hot_col('Beschreibung', width=600)
-                        } else {
-                                rhandsontable(DF, useTypes=TRUE) %>%
-                                        hot_table(highlightCol=TRUE, highlightRow=TRUE,
-                                                  allowRowEdit=TRUE) %>%
-                                        hot_col('Betrag', width=80) %>%
-                                        hot_col('Beschreibung', width=600)
-                        }
+                        rhotRender(DF)
                 })  
         }
         output$mobileDataSheetDirty <- renderText('')
@@ -157,12 +146,12 @@ observeEvent(input$mobileSaveSheet, {
 
 hot_dat2DF <- function(data, orderDecreasing){
         DF <- data.frame()
-        if(nrow(data)>0){
-                data <- data[, appFields]
-                data <- data[!is.na(data[appFieldKey]),]
+        if(nrow(data) > 0){
+                data <- data[, appFields, drop=FALSE]
+                data <- data[!is.na(data[appFieldKey]), , drop=FALSE]
                 DF <- rbind(data, rep(NA, length(appFields)))
         }
-        if(nrow(data)==0){
+        if(nrow(data) == 0){
                 initVal <- vector()
                 for(i in 1:length(appFields)){
                         switch(appFieldInits[i],
@@ -202,46 +191,42 @@ hot_dat2DF <- function(data, orderDecreasing){
                 )
         }
         if(!missing(orderDecreasing)) {
-                DF <- DF[order(DF[, appFieldKey], 
-                               decreasing = orderDecreasing), ]
-                rownames(DF) <- 1:nrow(DF)
+                if(nrow(DF) > 1){
+                        DF <- DF[order(DF[, appFieldKey, drop=FALSE], 
+                                       decreasing = orderDecreasing), , 
+                                 drop=FALSE]
+                }
+                if(!is.null(nrow(DF))){
+                        rownames(DF) <- 1:nrow(DF)
+                }
         }
-        colnames(DF) <- appFieldsDisplay
+        if(!is.null(nrow(DF))){
+                colnames(DF) <- appFieldsDisplay
+        }
         DF
 }
 
 # render Excel View UI
-output$dataSheet = renderRHandsontable({
+output$dataSheet <- renderRHandsontable({
         DF <- data.frame()
         if (is.null(input$dataSheet)) {
                 data <- currData()
-                if(nrow(data) > 0){
-                        data <- data[!(is.na(data[[appFieldKey]]) | 
-                                       data[[appFieldKey]] == 'NA'), ]
+                if(is.null(data[[appFieldKey]])){
+                        data <- data.frame()
+                } else {
+                        if(nrow(data) > 0){
+                                data <- data[!(is.na(data[[appFieldKey]]) | 
+                                                       data[[appFieldKey]] == 'NA'), ]
+                        }
                 }
-                suppressWarnings(DF <- hot_dat2DF(data, TRUE))
+                #                suppressWarnings(DF <- hot_dat2DF(data, TRUE))
+                DF <- hot_dat2DF(data, TRUE)
         } else {
                 suppressWarnings(data <- hot_to_r(input$dataSheet))
                 colnames(data) <- appFields
                 suppressWarnings(DF <- hot_dat2DF(data))
         }
-        
-        # write data to Hot
-        setHot(DF)
-        # nice formatting
-        if(nrow(DF)>20) {
-                rhandsontable(DF, useTypes=TRUE, height=400) %>%
-                        hot_table(highlightCol=TRUE, highlightRow=TRUE,
-                                  allowRowEdit=TRUE) %>%
-                        hot_col('Betrag', width=80) %>%
-                        hot_col('Beschreibung', width=600)
-        } else {
-                rhandsontable(DF, useTypes=TRUE) %>%
-                        hot_table(highlightCol=TRUE, highlightRow=TRUE,
-                                  allowRowEdit=TRUE) %>%
-                        hot_col('Betrag', width=80) %>%
-                        hot_col('Beschreibung', width=600)
-        }
+        rhotRender(DF)
 })
 
 # render mobile Excel View UI
@@ -259,23 +244,7 @@ output$mobileDataSheet = renderRHandsontable({
                 colnames(data) <- appFields
                 suppressWarnings(DF <- hot_dat2DF(data))
         }
-        
-        # write data to Hot
-        setHot(DF)
-        # nice formatting
-        if(nrow(DF)>20) {
-                rhandsontable(DF, useTypes=TRUE, height=400) %>%
-                        hot_table(highlightCol=TRUE, highlightRow=TRUE,
-                                  allowRowEdit=TRUE) %>%
-                        hot_col('Betrag', width=80) %>%
-                        hot_col('Beschreibung', width=600)
-        } else {
-                rhandsontable(DF, useTypes=TRUE) %>%
-                        hot_table(highlightCol=TRUE, highlightRow=TRUE,
-                                  allowRowEdit=TRUE) %>%
-                        hot_col('Betrag', width=80) %>%
-                        hot_col('Beschreibung', width=600)
-        }
+        rhotRender(DF)
 })
 
 output$exportCSV <- downloadHandler(

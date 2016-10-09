@@ -1,10 +1,10 @@
 # application specific logic
-# last update:2016-09-28
+# last update: 2016-10-07
 
-source('oyd_dateselect.R', local=TRUE)
-source('oyd_email.R', local=TRUE)
+source('srvDateselect.R', local=TRUE)
+source('srvEmail.R', local=TRUE)
+
 source('appLogicBankImport.R', local=TRUE)
-
 source('appLogicChart.R', local = TRUE)
 source('appLogicAnalysis.R', local = TRUE)
 
@@ -26,29 +26,6 @@ output$groupAnalysis <- DT::renderDataTable(datatable({
 output$groupChart <- renderPlot({
         renderGroupChart()
 })
-
-# output$groupChart <- renderPlotly({
-#         pdf(NULL)
-#         outputPlot <- plotly_empty()
-#         grpConfigList <<- collectGrpConfigItems()
-#         data <- data.frame(t(apply(grpConfigList, 1, calcGroupAnalysis)))
-#         selItems <- input$groupAnalysis_rows_selected
-#         if(!is.null(selItems)){
-#                 data <- data[selItems, ]
-#                 if(nrow(data) > 0){
-#                         data <- data[!is.na(data$Summe), ]
-#                         if(nrow(data) > 0){
-#                                 data$Summe <- abs(as.numeric(data$Summe))
-#                                 data$name <- rownames(data)
-#                                 data <- data[, c('name', 'Summe')]
-#                                 pdf(NULL)
-#                                 outputPlot <- plot_ly(data, labels = name, values = Summe, type = "pie", hole = 0.5, showlegend = F)
-#                         }
-#                 }
-#         }
-#         dev.off()
-#         outputPlot
-# })
 
 output$mobileBankPlot <- renderPlot({
         data <- currData()

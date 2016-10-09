@@ -1,3 +1,6 @@
+# layout for section "Storage"
+# last update: 2016-10-06
+
 appStore <- function(){
         fluidRow(
                 column(12,

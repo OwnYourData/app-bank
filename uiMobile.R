@@ -1,3 +1,6 @@
+# top-level framework for mobile version
+# last update:2016-10-06
+
 uiMobile <- function(){
         navbarPage(
                 uiOutput('hdrImageLinkMobile'),
@@ -5,8 +8,8 @@ uiMobile <- function(){
                 collapsible=TRUE,
                 inverse=FALSE,
                 windowTitle=paste0(appTitle, ' | OwnYourData'),
-        tabPanel('Konto Chart',
-                 plotOutput('mobileBankPlot')),
+        tabPanel('Chart',
+                 p('hello mobile world')),
         tabPanel('Datenblatt',
                 rHandsontableOutput('mobileDataSheet'),
                 br(),
@@ -33,6 +36,5 @@ uiMobile <- function(){
                 
         )
 )
-
-#        uiOutput('mobileUiStatusItemsRender')
+# uiOutput('mobileUiStatusItemsRender')
 }

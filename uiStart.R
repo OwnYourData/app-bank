@@ -1,3 +1,6 @@
+# dialog with assisstant to configure connection to PIA and other items
+# last update:2016-10-06
+
 uiStart <- function(){
         bsModal('startConfig', 'Assistent zur Konfiguration', 'launchDialog', size='large',
                 bsCollapse(id = "collapse", open = "Willkommen",

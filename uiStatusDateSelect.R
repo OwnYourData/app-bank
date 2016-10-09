@@ -1,3 +1,6 @@
+# UI for selecting a date-range
+# last update: 2016-10-06
+
 uiStatusDateSelect <- function(){
         fluidRow(
                 column(4,

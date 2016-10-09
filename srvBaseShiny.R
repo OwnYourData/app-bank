@@ -1,12 +1,9 @@
 # basic reactive functions for accessing PIA
-# last update:2016-08-24
+# last update: 2016-08-24
 
 currApp <- reactive({
         app <- vector()
         piaMsg <- ''
-        # pia_url <- input$store$pia_url
-        # app_key <- input$store$app_key
-        # app_secret <- input$store$app_secret
         pia_url <- piaUrl
         app_key <- appKey
         app_secret <- appSecret
@@ -87,26 +84,3 @@ currData <- reactive({
         }
         piaData
 })
-
-saveDateItem <- function(app, date, url, value){
-        if(!is.null(date) & 
-           (length(all.equal(app, logical(0)))>1) &
-           !is.na(app[['token']])){
-                piaData <- currData()
-                existData <- piaData[piaData$date == date, ]
-                existData <- existData[complete.cases(existData), ]
-                data <- list(date=date, 
-                             value=value)
-                if (nrow(existData) > 0) {
-                        if(is.na(value) | is.null(value) | value == 'NA'){
-                                deleteItem(app, url, existData$id)
-                        } else {
-                                updateItem(app, url, data, existData$id)
-                        }
-                } else {
-                        if(!is.na(value) & !is.null(value) & value != 'NA' & nchar(as.character(value))>2){
-                                writeItem(app, url, data)
-                        }
-                }
-        }                
-}

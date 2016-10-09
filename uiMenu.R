@@ -1,3 +1,6 @@
+# config menu in the top-right corner
+# last update:2016-10-06
+
 uiMenu <- function(){
            tabPanel(HTML(paste0("Version</a></li>",
                                 "<li><a href=\"https://github.com/OwnYourData/app-",

@@ -1,18 +1,5 @@
 # server-side UI logic
-# last update:2016-08-14
-
-# output$upgradeLink <- renderText({
-#         renderUpgrade(session)
-# })
-# 
-# renderUpgrade <- function(session){
-#         if(grepl('.herokuapp.com', session$clientData$url_hostname))
-#                 paste0('<h4>Upgrade: <a href="https://dashboard.heroku.com/apps/',
-#                        strsplit(session$clientData$url_hostname, '.', fixed=TRUE)[[1]][1],
-#                        '/deploy/github">hier klicken</a></h4>',
-#                        '<p class="help-block">Anmerkung: zum Upgrade musst du auf der verlinkten Seite ganz nach unten scrollen und dort auf die Schaltfläche "Deploy Branch" klicken; der Installationsvorgang dauert dann etwa 10 Minuten</p>')
-# 
-# }
+# last update: 2016-10-07
 
 output$versionHistory <- renderText({
         do.call(paste, as.list(apply(verHistory,1,function(x){ 

@@ -1,3 +1,6 @@
+# footer of the app
+# last update:2016-10-06
+
 uiFooter <- function() {
         fluidRow(
                 column(1),
