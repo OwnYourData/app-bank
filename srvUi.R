@@ -14,10 +14,6 @@ output$hdrImageLinkDesktop <- renderUI({
         renderHdrImageLink()
 })
 
-output$hdrImageLinkMobile <- renderUI({
-        renderHdrImageLink()
-})
-
 headerTitle <- function() {
         app <- currApp()
         if(length(all.equal(app, logical(0)))>1){

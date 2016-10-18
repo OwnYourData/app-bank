@@ -11,7 +11,7 @@ uiStatusDateSelect <- function(){
                                       label = 'Zeitfenster',
                                       start = as.Date(Sys.Date() - months(6)), 
                                       end = Sys.Date()
-                        )
+                       )
                 ),
                 column(4,
                        selectInput('dateSelect',
@@ -25,7 +25,7 @@ uiStatusDateSelect <- function(){
                                                'alle Daten'='10',
                                                'individuell'='7'),
                                    selected = 4
-                        )
+                       )
                 )
         )
 }

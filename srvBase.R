@@ -1,5 +1,5 @@
 # basic functions for accessing PIA
-# last update: 2016-10-07
+# last update: 2016-10-12
 
 # Low-level functions to access PIA =======================
 # used header for GET and POST requests
@@ -22,10 +22,10 @@ getToken <- function(pia_url, app_key, app_secret) {
         optTimeout <- RCurl::curlOptions(connecttimeout = 10)
         response <- tryCatch(
                 RCurl::postForm(auth_url,
-                                client_id     = app_key,
-                                client_secret = app_secret,
-                                grant_type    = 'client_credentials',
-                                .opts         = optTimeout),
+                         client_id     = app_key,
+                         client_secret = app_secret,
+                         grant_type    = 'client_credentials',
+                         .opts         = optTimeout),
                 error = function(e) { return(NA) })
         if (is.na(response)) {
                 return(NA)
@@ -98,17 +98,17 @@ readItems <- function(app, repo_url) {
         }
         headers <- defaultHeaders(app[['token']])
         url_data <- paste0(repo_url, '?size=2000')
-        h <- RCurl::basicHeaderGatherer()
+        header <- RCurl::basicHeaderGatherer()
         doc <- tryCatch(
-                RCurl::getURI(url_data, 
-                      .opts=list(httpheader = headers), 
-                      headerfunction = h$update),
+                RCurl::getURI(url_data,
+                              .opts=list(httpheader = headers),
+                              headerfunction = header$update),
                 error = function(e) { return(NA) })
         response <- NA
         respData <- data.frame()
         if(!is.na(doc)){
                 recs <- tryCatch(
-                        as.integer(h$value()[['X-Total-Count']]),
+                        as.integer(header$value()[['X-Total-Count']]),
                         error = function(e) { return(0)})
                 if(recs > 2000) {
                         for(page in 0:floor(recs/2000)){
@@ -168,8 +168,8 @@ deleteItem <- function(app, repo_url, id){
         headers <- defaultHeaders(app[['token']])
         item_url <- paste0(repo_url, '/', id)
         response <- tryCatch(
-                httr::DELETE(item_url, 
-                       add_headers(headers)),
+                httr::DELETE(item_url,
+                             add_headers(headers)),
                 error = function(e) { return(NA) })
         response
 }

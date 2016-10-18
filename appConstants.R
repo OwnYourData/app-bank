@@ -6,16 +6,31 @@ appName <- 'bank'
 appTitle <- 'Kontoentwicklung'
 app_id <- 'eu.ownyourdata.bank'
 
-appFields <- c('date', 'value', 'description')
-appFieldTypes <- c('date', 'double', 'string')
-appFieldInits <- c('today', 'zero', 'empty')
-appFieldKey <- 'date'
-appFieldsDisplay <- c('Datum', 'Betrag', 'Beschreibung')
-appFieldsDisplayWidth <- c(100, 80, 600)
+# definition of data structure
+currRepoSelect <- ''
+appRepos <- list(Kontobewegungen = 'eu.ownyourdata.bank',
+                 Verlauf         = 'eu.ownyourdata.bank.log')
+appStruct <- list(
+        Kontobewegungen = list(
+                fields      = c('date', 'value', 'description'),
+                fieldKey    = 'date',
+                fieldTypes  = c('date', 'double', 'string'),
+                fieldInits  = c('today', 'zero', 'empty'),
+                fieldTitles = c('Datum', 'Betrag', 'Beschreibung'),
+                fieldWidths = c(100, 80, 600)),
+        Verlauf = list(
+                fields      = c('date', 'description'),
+                fieldKey    = 'date',
+                fieldTypes  = c('date', 'string'),
+                fieldInits  = c('empty', 'empty'),
+                fieldTitles = c('Datum', 'Text'),
+                fieldWidths = c(150, 450)))
 
 # Version information
-currVersion <- "0.5.0"
+currVersion <- "0.5.1"
 verHistory <- data.frame(rbind(
+        c(version = "0.5.1",
+          text    = "überarbeitete Chart-Visualisierung"),
         c(version = "0.5.0",
           text    = "dynamischer Kontoimport, UI Update (OYD Template)"),
         c(version = "0.4.0",

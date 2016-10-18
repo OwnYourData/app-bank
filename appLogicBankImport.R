@@ -29,3 +29,15 @@ csvImportDynamic <- function(myFile, config) {
                 data[, c('date', 'description', 'id', 'value')]
         })
 }
+
+observeEvent(input$bankFile, {
+        myFile <- input$bankFile
+        if(grepl('easybank', myFile$name, ignore.case = TRUE)){
+                updateSelectInput(session, 'bankInstitute',
+                                  selected = 'easy')
+        }
+        if(grepl('ing-diba', myFile$name, ignore.case = TRUE)){
+                updateSelectInput(session, 'bankInstitute',
+                                  selected = 'ingdiba')
+        }
+})

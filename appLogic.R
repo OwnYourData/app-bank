@@ -13,6 +13,21 @@ appData <- function(data){
         data
 }
 
+getRepoStruct <- function(repo){
+        appStruct[[repo]]
+}
+
+repoData <- function(repo){
+        data <- data.frame()
+        app <- currApp()
+        if(length(app) > 0){
+                url <- itemsUrl(app[['url']],
+                                repo)
+                data <- readItems(app, url)
+        }
+        data
+}
+
 output$bankPlot <- renderPlotly({
         data <- currData()
         bankPlotly(data)
@@ -29,16 +44,6 @@ output$groupAnalysis <- DT::renderDataTable(datatable({
 
 output$groupChart <- renderPlot({
         renderGroupChart()
-})
-
-output$mobileBankPlot <- renderPlot({
-        data <- currData()
-        if(nrow(data)>0){
-                data$dat <- as.Date(as.character(data$date))
-                data <- data[order(data[, 'dat']),]
-                data$cumsum <- cumsum(data$value)
-                plot(x=data$dat, y=data$cumsum, type='l', xlab='', ylab='')
-        }
 })
 
 csv_import <- function(){
@@ -90,6 +95,8 @@ observeEvent(input$bankImport, {
                 }
                 url <- itemsUrl(app[['url']], app[['app_key']])
                 
+                appFields <- appStruct[['Kontobewegungen']]$fields
+                appFieldTypes <- appStruct[['Kontobewegungen']]$fieldTypes
                 importDigest <- createDigest(importData, appFields)
                 piaDigest <- createDigest(piaData, appFields)
                 createPiaData <- 
@@ -103,7 +110,8 @@ observeEvent(input$bankImport, {
                                                      for(i in 1:nrow(createPiaData)){
                                                              cnt <- cnt + 1
                                                              dataItem <- preserveDate(
-                                                                     createPiaData[i, appFields])
+                                                                     createPiaData[i, appFields],
+                                                                     appFieldTypes)
                                                              dataItem$descriptionOrig <- dataItem$description
                                                              writeItem(app, url, dataItem)
                                                              setProgress(value=cnt,
@@ -113,6 +121,9 @@ observeEvent(input$bankImport, {
                                              }
                                      })
                 }
+                writeLog(paste0('Kontoauszug importiert (',
+                                nrow(createPiaData),
+                                ' Datensätze wurden erstellt)'))
                 createAlert(session, 'taskInfo', 'successImport',
                             style = 'success', append = TRUE,
                             title = 'Kontodaten Import',

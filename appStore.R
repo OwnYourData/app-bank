@@ -5,6 +5,9 @@ appStore <- function(){
         fluidRow(
                 column(12,
                        h3('Datenblatt'),
+                       selectInput('repoSelect',
+                                   label = 'Auswahl:',
+                                   choices = names(appRepos)),
                        rHandsontableOutput('dataSheet'),
                        br(),
                        htmlOutput('dataSheetDirty', inline = TRUE),

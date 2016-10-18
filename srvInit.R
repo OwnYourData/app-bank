@@ -42,17 +42,9 @@ observe({
                 updateTextInput(session, 'modalPiaUrl', value=piaUrl)
                 updateTextInput(session, 'modalPiaId', value=appKey)
                 updateTextInput(session, 'modalPiaSecret', value=appSecret)
-                updateTextInput(session, 'pia_urlMobile', value=piaUrl)
-                updateTextInput(session, 'app_keyMobile', value=appKey)
-                updateTextInput(session, 'app_secretMobile', value=appSecret)
                 output$currentToken <- renderUI({
                         HTML(paste0('<strong>aktueller Token:</strong><br>',
                                     app[['token']],
-                                    '<br><br>'))
-                })
-                output$mobileToken <- renderUI({
-                        HTML(paste0('<hr>',
-                                    '<strong>Token:</strong> ', app[['token']],
                                     '<br><br>'))
                 })
                 piaMailConfig <- getPiaEmailConfig(app)
@@ -66,18 +58,7 @@ observe({
                 updateTextInput(session, 'modalPiaUrl', value=piaUrl)
                 updateTextInput(session, 'modalPiaId', value=appKey)
                 updateTextInput(session, 'modalPiaSecret', value=appSecret)
-                updateTextInput(session, 'pia_urlMobile', value=piaUrl)
-                updateTextInput(session, 'app_keyMobile', value=appKey)
-                updateTextInput(session, 'app_secretMobile', value=appSecret)
-                
-                # updateTextInput(session, 'modalPiaUrl', value='')
-                # updateTextInput(session, 'modalPiaId', value='')
-                # updateTextInput(session, 'modalPiaSecret', value='')
-                # updateTextInput(session, 'pia_urlMobile', value='')
-                # updateTextInput(session, 'app_keyMobile', value='')
-                # updateTextInput(session, 'app_secretMobile', value='')
                 output$currentToken <- renderText('')
-                output$mobileToken <- renderText('')
         }
 })
 
@@ -102,7 +83,11 @@ output$connectError <- renderUI({
                 if(jsonlite::validate(response)){
                         ''
                 } else {
-                        response
+                        if(grepl('error', response, ignore.case = TRUE)){
+                                response
+                        } else {
+                                paste('Error:', response)
+                        }
                 }
         }
 })
@@ -115,21 +100,6 @@ observeEvent(input$p1next, ({
                                'PIA' = 'primary',
                                'Email' = 'info',
                                'Fertig' = 'info'))
-}))
-
-observeEvent(input$mobilePiaSave, ({
-        updateStore(session, "pia_url", isolate(input$pia_urlMobile))
-        updateStore(session, "app_key", isolate(input$app_keyMobile))
-        updateStore(session, "app_secret", isolate(input$app_secretMobile))
-        piaUrl <<- isolate(input$pia_urlMobile)
-        appKey <<- isolate(input$app_keyMobile)
-        appSecret <<- isolate(input$app_secretMobile)
-        app <- setupApp(piaUrl, appKey, appSecret)
-        output$mobileToken <- renderUI({
-                HTML(paste0('<hr>',
-                           '<strong>Token:</strong> ', app[['token']],
-                           '<br><br>'))
-        })
 }))
 
 observeEvent(input$p2prev, ({
@@ -146,9 +116,12 @@ observeEvent(input$disconnectPIA, {
         updateStore(session, 'pia_url', NA)
         updateStore(session, 'app_key', NA)
         updateStore(session, 'app_secret', NA)
-        piaUrl <<- ""
-        appKey <<- ""
-        appSecret <<- ""
+        updateTextInput(session, 'modalPiaSecret', value='')
+        updateTextInput(session, 'modalPiaId', value='')
+        updateTextInput(session, 'modalPiaUrl', value='')
+        piaUrl <<- ''
+        appKey <<- ''
+        appSecret <<- ''
         createAlert(session, 'piaStatus', alertId = 'myPiaStatus', 
                     style = 'danger', append = FALSE,
                     title = 'PIA Verbindung',
@@ -156,20 +129,6 @@ observeEvent(input$disconnectPIA, {
                                      icon('gear'),
                                      ' rechts oben "Konfiguration" und überprüfe die Verbindungsdaten zu deiner PIA!'))
 })
-
-observeEvent(input$disconnectPIAmobile, {
-        updateStore(session, 'pia_url', NA)
-        updateStore(session, 'app_key', NA)
-        updateStore(session, 'app_secret', NA)
-        piaUrl <<- ""
-        appKey <<- ""
-        appSecret <<- ""
-        updateTextInput(session, 'pia_urlMobile', value=piaUrl)
-        updateTextInput(session, 'app_keyMobile', value=appKey)
-        updateTextInput(session, 'app_secretMobile', value=appSecret)
-        output$mobileToken <- renderUI({''})
-})
-
 
 observeEvent(input$p2next, ({
         updateStore(session, "pia_url", isolate(input$modalPiaUrl))
