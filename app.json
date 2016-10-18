@@ -1,8 +1,0 @@
-{
-  "name": "Kontoentwicklung",
-  "description": "Sammle deine Kontodaten und werte sie aus",
-  "repository": "https://github.com/OwnYourData/app-bank",
-  "keywords": ["ownyourdata", "konto", "bank"],
-  "website": "https://www.ownyourdata.eu",
-  "buildpacks": [{ "url": "http://github.com/virtualstaticvoid/heroku-buildpack-r" }]
-}

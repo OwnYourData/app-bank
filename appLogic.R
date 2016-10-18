@@ -8,6 +8,10 @@ source('appLogicBankImport.R', local=TRUE)
 source('appLogicChart.R', local = TRUE)
 source('appLogicAnalysis.R', local = TRUE)
 
+appData <- function(data){
+        data$descriptionOrig <- data$description
+        data
+}
 
 output$bankPlot <- renderPlotly({
         data <- currData()
@@ -69,11 +73,6 @@ csv_import <- function(){
                                     'value')
                 data
         }
-}
-
-appData <- function(data){
-        data$descriptionOrig <- data$description
-        data
 }
 
 observeEvent(input$bankImport, {

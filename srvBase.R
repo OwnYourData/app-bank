@@ -19,19 +19,19 @@ getToken <- function(pia_url, app_key, app_secret) {
         auth_url <- paste0(pia_url, '/oauth/token')
         # reduce response timeout to 10s to avoid hanging app
         # https://curl.haxx.se/libcurl/c/CURLOPT_CONNECTTIMEOUT.html
-        optTimeout <- curlOptions(connecttimeout = 10)
+        optTimeout <- RCurl::curlOptions(connecttimeout = 10)
         response <- tryCatch(
-                postForm(auth_url,
-                         client_id     = app_key,
-                         client_secret = app_secret,
-                         grant_type    = 'client_credentials',
-                         .opts         = optTimeout),
+                RCurl::postForm(auth_url,
+                                client_id     = app_key,
+                                client_secret = app_secret,
+                                grant_type    = 'client_credentials',
+                                .opts         = optTimeout),
                 error = function(e) { return(NA) })
         if (is.na(response)) {
                 return(NA)
         } else {
                 if(jsonlite::validate(response[1])){
-                        return(fromJSON(response[1])$access_token)
+                        return(rjson::fromJSON(response[1])$access_token)
                 } else {
                         return(NA)
                 }
@@ -60,7 +60,7 @@ r2d <- function(response){
                 data.frame()
         } else {
                 if (nchar(response) > 0) {
-                        retVal <- fromJSON(response)
+                        retVal <- rjson::fromJSON(response)
                         if(length(retVal) == 0) {
                                 data.frame()
                         } else {
@@ -98,9 +98,9 @@ readItems <- function(app, repo_url) {
         }
         headers <- defaultHeaders(app[['token']])
         url_data <- paste0(repo_url, '?size=2000')
-        h <- basicHeaderGatherer()
+        h <- RCurl::basicHeaderGatherer()
         doc <- tryCatch(
-                getURI(url_data, 
+                RCurl::getURI(url_data, 
                       .opts=list(httpheader = headers), 
                       headerfunction = h$update),
                 error = function(e) { return(NA) })
@@ -116,7 +116,7 @@ readItems <- function(app, repo_url) {
                                                    '?page=', page,
                                                    '&size=2000')
                                 response <- tryCatch(
-                                        getURL(url_data,
+                                        RCurl::getURL(url_data,
                                                .opts=list(httpheader=headers)),
                                         error = function(e) { return(NA) })
                                 subData <- r2d(response)
@@ -128,7 +128,7 @@ readItems <- function(app, repo_url) {
                         }
                 } else {
                         response <- tryCatch(
-                                getURL(url_data,
+                                RCurl::getURL(url_data,
                                        .opts=list(httpheader = headers)),
                                 error = function(e) { return(NA) })
                         respData <- r2d(response)
@@ -142,7 +142,7 @@ writeItem <- function(app, repo_url, item) {
         headers <- defaultHeaders(app[['token']])
         data <- rjson::toJSON(item)
         response <- tryCatch(
-                postForm(repo_url,
+                RCurl::postForm(repo_url,
                          .opts=list(httpheader = headers,
                                     postfields = data)),
                 error = function(e) { 
@@ -156,7 +156,7 @@ updateItem <- function(app, repo_url, item, id) {
         item <- c(item, c(id=as.numeric(id)))
         data <- rjson::toJSON(item)
         response <- tryCatch(
-                postForm(repo_url,
+                RCurl::postForm(repo_url,
                          .opts=list(httpheader = headers,
                                     postfields = data)),
                 error = function(e) { return(NA) })
@@ -168,7 +168,7 @@ deleteItem <- function(app, repo_url, id){
         headers <- defaultHeaders(app[['token']])
         item_url <- paste0(repo_url, '/', id)
         response <- tryCatch(
-                DELETE(item_url, 
+                httr::DELETE(item_url, 
                        add_headers(headers)),
                 error = function(e) { return(NA) })
         response

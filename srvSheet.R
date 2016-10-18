@@ -15,13 +15,11 @@ preserveDate <- function(data){
 
 preserveUTF8 <- function(data){
         d <- as.list(data)
-        if(length(all.equal(app, logical(0)))>1){
-                for(i in 1:length(d)){
-                        if(appFieldTypes[i] == 'string'){
-                                d[i] <- iconv(as.character(d[i][[1]]),
-                                              from='latin1',
-                                              to='UTF-8')
-                        }
+        for(i in 1:length(d)){
+                if(appFieldTypes[i] == 'string'){
+                        d[i] <- iconv(as.character(d[i][[1]]),
+                                      from='latin1',
+                                      to='UTF-8')
                 }
         }
         d
