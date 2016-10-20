@@ -15,7 +15,7 @@ appStruct <- list(
                 fields      = c('date', 'value', 'description'),
                 fieldKey    = 'date',
                 fieldTypes  = c('date', 'double', 'string'),
-                fieldInits  = c('today', 'zero', 'empty'),
+                fieldInits  = c('empty', 'zero', 'empty'),
                 fieldTitles = c('Datum', 'Betrag', 'Beschreibung'),
                 fieldWidths = c(100, 80, 600)),
         Verlauf = list(

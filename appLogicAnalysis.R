@@ -318,6 +318,7 @@ observeEvent(input$showGroupDetails, {
                             title = 'Details für Auswahl',
                             content = 'Es sind keine Gruppen ausgewählt.')
         } else {
+                appFields <- appStruct[['Kontobewegungen']]$fields
                 closeAlert(session, 'nothingSelect')
                 cfgItems <- collectGrpConfigItems()
                 cfgItems <- cfgItems[selItems, ]

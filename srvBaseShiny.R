@@ -2,6 +2,8 @@
 # last update: 2016-08-24
 
 currApp <- reactive({
+        input$p2next
+        input$disconnectPIA
         app <- vector()
         piaMsg <- ''
         pia_url <- piaUrl

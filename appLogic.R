@@ -93,9 +93,14 @@ observeEvent(input$bankImport, {
                 if(nrow(importData) > 0){
                         Encoding(importData$description) <- "UTF-8"
                 }
-                url <- itemsUrl(app[['url']], app[['app_key']])
+                url <- itemsUrl(app[['url']], 
+                                appRepos[['Kontobewegungen']])
                 
+                repoName <- input$repoSelect
+                repoStruct <- getRepoStruct(repoName)
+
                 appFields <- appStruct[['Kontobewegungen']]$fields
+                appFieldKey <- appStruct[['Kontobewegungen']]$fieldKey
                 appFieldTypes <- appStruct[['Kontobewegungen']]$fieldTypes
                 importDigest <- createDigest(importData, appFields)
                 piaDigest <- createDigest(piaData, appFields)
@@ -153,7 +158,7 @@ observeEvent(input$bankImport, {
                         if(nrow(data) > 0){
                                 data <- data[!(is.na(data[[appFieldKey]]) | 
                                                as.character(data[[appFieldKey]]) == 'NA'), ]
-                                suppressWarnings(DF <- hot_dat2DF(data, TRUE))
+                                suppressWarnings(DF <- hot_dat2DF(data, repoStruct, TRUE))
                         }
                         # write data to Hot
                         setHot(DF)
@@ -370,20 +375,6 @@ observeEvent(input$bankInstitute, {
         )
 })
 
-output$saveReferenceInfo <- renderUI({
-        app <- currApp()
-        url <- itemsUrl(app[['url']], paste0(app[['app_key']],
-                                             '.reference'))
-        refData <- readItems(app, url)
-        if(nrow(refData) == 1){
-                updateDateInput(session, 'referenceDate',
-                                value = refData$date)
-                updateNumericInput(session, 'referenceValue',
-                                   value = refData$value)
-        }
-        ''
-})
-
 observeEvent(input$saveReference, {
         app <- currApp()
         url <- itemsUrl(app[['url']], paste0(app[['app_key']],
@@ -393,10 +384,19 @@ observeEvent(input$saveReference, {
         refData <- readItems(app, url)
         if(nrow(refData) > 0){
                 retVal <- updateItem(app, url, data, refData$id)
-                output$saveReferenceInfo <- renderUI({'Referenzwert aktualisiert'})
+                createAlert(session, 'taskInfo', 'successReference',
+                            style = 'success', append = TRUE,
+                            title = 'Referenzwert festlegen',
+                            content = 'Der Referenzwert wurde aktualisiert.')
+                writeLog('Referenzwert wurde aktualisiert')
+                
         } else {
                 retVal <- writeItem(app, url, data)
-                output$saveReferenceInfo <- renderUI({'Referenzwert gespeichert'})
+                createAlert(session, 'taskInfo', 'successReference',
+                            style = 'success', append = TRUE,
+                            title = 'Referenzwert festlegen',
+                            content = 'Der Referenzwert wurde gespeichert')
+                writeLog('Referenzwert wurde gespeichert')
         }
         
 })
