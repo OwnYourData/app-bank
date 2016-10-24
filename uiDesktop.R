@@ -23,7 +23,7 @@ uiDesktop <- function(){
                         windowTitle=paste0(appTitle, ' | OwnYourData'),
                         tabPanel(HTML(paste0('hidden', 
                                              '</a></li>',
-                                             '<li><a id="returnPIAlink" href="#">zurück zur PIA'))
+                                             '<li><a id="returnPIAlink" href="#">zum Datentresor'))
                         ),
                         tabPanel(appTitle,
                                  value = appName,

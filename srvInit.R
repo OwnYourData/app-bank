@@ -27,13 +27,19 @@ observe({
         
         app <- setupApp(piaUrl, appKey, appSecret)
         if(urlParamExist){
-                updateStore(session, "pia_url", piaUrl)
-                updateStore(session, "app_key", appKey)
-                updateStore(session, "app_secret", appSecret)
-                createAlert(session, 'urlStatus', alertId = 'myUrlStatus',
-                            style = 'info', append = FALSE,
-                            title = 'Neue PIA Verbindung',
-                            content = 'Beim Öffnen wurden neue Verbindungsdaten zur PIA übergeben und gespeichert.')
+                if((input$store$pia_url == urlParams[['PIA_URL']]) &
+                   (input$store$app_key == urlParams[['APP_KEY']]) &
+                   (input$store$app_secret == urlParams[['APP_SECRET']])){
+                        
+                } else {
+                        updateStore(session, "pia_url", piaUrl)
+                        updateStore(session, "app_key", appKey)
+                        updateStore(session, "app_secret", appSecret)
+                        createAlert(session, 'urlStatus', alertId = 'myUrlStatus',
+                                    style = 'info', append = FALSE,
+                                    title = 'Verbindung zu neuem Datentresor',
+                                    content = 'Beim Öffnen wurden neue Verbindungsdaten zum Datentresor übergeben und gespeichert.')
+                }
         } else {
                 closeAlert(session, 'myUrlStatus')
         }

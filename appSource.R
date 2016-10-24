@@ -52,23 +52,33 @@ appSource <- function(){
                                         helpText('Kontobewegungen beschreiben Eingänge oder Ausgaben von einem Konto. Durch die Angabe eines Referenzwertes kann daraus der Kontostand zu anderen Zeiten berechnet werden.'),
                                         dateInput('referenceDate', label = 'Datum des Referenzwerts:'),
                                         numericInput('referenceValue', label = 'Referenzwert:', value=0),
-                                        actionButton('saveReference', 'Referenzwert speichern', icon('save')),
-                                        htmlOutput('saveReferenceInfo')
+                                        actionButton('saveReference', 'Referenzwert speichern', icon('save'))
                                ),
-                               tabPanel('Email Benachrichtigung einrichten',
+                               tabPanel('Erinnerungsfunktionen',
                                         br(),
-                                        bsAlert('mailConfigStatus'),
-                                        br(),
-                                        textInput('mailerReceiver', 'Emailadresse des Empfängers'),
-                                        selectInput('mailerInterval', 'Versandintervall:', choices = list(
-                                                'auswählen...' = 1,
-                                                'täglich'      = 2,
-                                                'wöchentlich'  = 3,
-                                                'monatlich'    = 4)),
-                                        conditionalPanel(
-                                                condition = 'input.mailerReceiver != ""',
-                                                actionButton('endMailer', 'Emailversand beenden', icon('trash-o'))
+                                        # bsAlert('mailConfigStatus'),
+                                        # br(),
+                                        p('Hier hast du verschiedene Möglichkeiten, dich an das Hochladen des aktuellen Kontoauszugs erinnern zu lassen:'),
+                                        tags$ul(
+                                                tags$li(
+                                                        textInput('mailerReceiver', 'Erinnerungsemails senden:'),
+                                                        helpText('Gib hier deine Emailadresse ein, um zum Monatsanfang ein Erinnerungsemail zugeschickt zu bekommen.'),
+                                                        br()
+                                                ),
+                                                tags$li(
+                                                        actionButton('icalReminder', 'Erinnerung im Kalender speichern', icon('calendar')),
+                                                        helpText('Wenn du auf diese Schaltfläche klickst, wird eine iCalender (.ics) Datei heruntergeladen. Öffne diese mit deinem Kalender und es wird eine Erinnerung am Montasanfang zum Hochladen des aktuellen Kontoauszugs angelegt.')
+                                                )
                                         )
+                                        # selectInput('mailerInterval', 'Versandintervall:', choices = list(
+                                        #         'auswählen...' = 1,
+                                        #         'täglich'      = 2,
+                                        #         'wöchentlich'  = 3,
+                                        #         'monatlich'    = 4)),
+                                        # conditionalPanel(
+                                        #         condition = 'input.mailerReceiver != ""',
+                                        #         actionButton('endMailer', 'Emailversand beenden', icon('trash-o'))
+                                        # )
                                )
                        )
                 )

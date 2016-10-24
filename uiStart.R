@@ -37,7 +37,7 @@ uiStart <- function(){
                                            style = "info"),
                            bsCollapsePanel("Email-Konfiguration - Optional (Schritt 3 von 4)",
                                            value = "Email",
-                                           "Gib hier die Verbindungsdaten zu deinem Emailkonto an",
+                                           "Falls du ein eigenes Emailkonto zum Versenden und Empfangen von Emails verwenden möchtest, kannst du hier die notwendigen Verbindungsdaten eingeben. Falls die Konfiguration leer bleibt, wird der Emailserver von OwnYourData verwendet.",
                                            br(),br(),
                                            textInput('modalMailerAddress', 'Mail Server:'),
                                            numericInput('modalMailerPort', 'Port:', 0),

@@ -1,6 +1,7 @@
 {
         "name":"Kontoentwicklung",
         "identifier":"eu.ownyourdata.bank",
+        "default-url":"kontoentwicklung.datentresor.org",
         "type":"external",
         "description":"verwalte deine Kontoauszüge",
         "permissions":[ "eu.ownyourdata.info:read",

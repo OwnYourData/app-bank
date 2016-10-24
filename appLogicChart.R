@@ -12,6 +12,7 @@ bankPlotly <- function(data){
                         daterange <- seq(mymin, mymax, "days")
                         data$dat <- as.Date(data$date)
                         data <- data[order(data[, 'dat']),]
+                        input$saveReference
                         app <- currApp()
                         url <- itemsUrl(app[['url']], paste0(app[['app_key']],
                                                              '.reference'))
@@ -98,8 +99,8 @@ bankPlotly <- function(data){
         } else {
                 createAlert(session, 'dataStatus', alertId = 'myDataStatus',
                             style = 'warning', append = FALSE,
-                            title = 'Keine Daten in der PIA vorhanden',
-                            content = 'Derzeit sind noch keine Daten in der PIA erfasst. Wechsle zu "Datenquellen" und importiere Kontodaten oder richte auch gleich ein Erinnerungsmail ein!')
+                            title = 'Keine Kontodaten im Datentresor vorhanden',
+                            content = 'Derzeit sind noch keine Kontodaten im Datentresor gespeichert. Wechsle zu "Datenquellen" und importiere Kontodaten oder richte auch gleich ein Erinnerungsmail ein!')
         }
         dev.off()
         outputPlot

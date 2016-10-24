@@ -34,6 +34,8 @@ output$bankPlot <- renderPlotly({
 })
 
 output$groupAnalysis <- DT::renderDataTable(datatable({
+        input$bankImport
+        input$saveReference
         grpConfigList <<- collectGrpConfigItems()
         grpConfigUiList <<- rownames(grpConfigList)
         updateSelectInput(session, 'grpConfigList', choices = grpConfigUiList)
@@ -401,13 +403,9 @@ observeEvent(input$saveReference, {
         
 })
 
-observeEvent(input$endMailer, {
-        app <- currApp()
-        url <- itemsUrl(app[['url']], schedulerKey())
-        data <- readItems(app, url)
-        if(nrow(data) > 0){
-                retVal <- deleteItem(app, url, data$id)
-        }
-        updateTextInput(session, 'mailerReceiver', value='')
-        updateSelectInput(session, 'mailerInterval', selected = 1)
+observeEvent(input$mailerReceiver, {
+        createAlert(session, 'taskInfo', 'successEmail',
+                    style = 'success', append = TRUE,
+                    title = 'Erinnerungsemail konfigurieren',
+                    content = 'Die monatliche Erinnerung per Email wurde eingerichtet.')
 })
