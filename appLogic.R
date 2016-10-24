@@ -404,8 +404,11 @@ observeEvent(input$saveReference, {
 })
 
 observeEvent(input$mailerReceiver, {
-        createAlert(session, 'taskInfo', 'successEmail',
-                    style = 'success', append = TRUE,
-                    title = 'Erinnerungsemail konfigurieren',
-                    content = 'Die monatliche Erinnerung per Email wurde eingerichtet.')
+        email <- input$mailerReceiver
+        if(validEmail(email)){
+                createAlert(session, 'taskInfo', 'successEmail',
+                            style = 'success', append = TRUE,
+                            title = 'Erinnerungsemail konfigurieren',
+                            content = 'Die monatliche Erinnerung per Email wurde eingerichtet.')
+        }
 })
