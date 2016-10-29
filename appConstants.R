@@ -1,5 +1,5 @@
 # global constants available to the app
-# last update:2016-10-06
+# last update:2016-10-29
 
 # constants required for every App
 appName <- 'bank'
@@ -27,8 +27,10 @@ appStruct <- list(
                 fieldWidths = c(150, 450)))
 
 # Version information
-currVersion <- "0.5.1"
+currVersion <- "0.5.2"
 verHistory <- data.frame(rbind(
+        c(version = "0.5.2",
+          text    = "Erinnerung zum Hochladen des Kontoauszugs durch Kalendereintrag"),
         c(version = "0.5.1",
           text    = "überarbeitete Chart-Visualisierung"),
         c(version = "0.5.0",

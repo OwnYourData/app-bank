@@ -1,5 +1,5 @@
 # functions for handling the initial dialog when starting the app
-# last update: 2016-07-27
+# last update: 2016-10-29
 
 observe({
         session$sendCustomMessage(type='setPiaUrl',
@@ -139,7 +139,7 @@ observeEvent(input$disconnectPIA, {
                     title = 'PIA Verbindung',
                     content = paste0('Es sind keine oder nur unvollständige Verbindungsdaten vorhanden. Wähle im Menü ',
                                      icon('gear'),
-                                     ' rechts oben "Konfiguration" und überprüfe die Verbindungsdaten zu deiner PIA!'))
+                                     ' rechts oben "Konfiguration" und überprüfe die Verbindungsdaten zu deinem Datentresor!'))
 })
 
 observeEvent(input$p2next, ({
@@ -160,7 +160,7 @@ observeEvent(input$p2next, ({
                             title = 'PIA Verbindung',
                             content = paste0('Es sind keine oder nur unvollständige Verbindungsdaten vorhanden. Wähle im Menü ',
                                              icon('gear'),
-                                             ' rechts oben "Konfiguration" und überprüfe die Verbindungsdaten zu deiner PIA!'))
+                                             ' rechts oben "Konfiguration" und überprüfe die Verbindungsdaten zu deinem Datentresor!'))
         } else {
                 closeAlert(session, 'myPiaStatus')
         }

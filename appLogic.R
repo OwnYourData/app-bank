@@ -28,6 +28,20 @@ repoData <- function(repo){
         data
 }
 
+
+currData <- reactive({
+        input$bankImport
+        app <- currApp()
+        if(length(app) > 0) {
+                url <- itemsUrl(app[['url']], 
+                                paste0(app[['app_key']]))
+                piaData <- readItems(app, url)
+        } else {
+                piaData <- data.frame()
+        }
+        piaData
+})
+
 output$bankPlot <- renderPlotly({
         data <- currData()
         bankPlotly(data)
