@@ -381,6 +381,7 @@ observeEvent(input$saveReference, {
         app <- currApp()
         url <- itemsUrl(app[['url']], paste0(app[['app_key']],
                                              '.reference'))
+        rv <- input$referenceValue
         data <- list(date=as.character(input$referenceDate),
                      value=input$referenceValue)
         refData <- readItems(app, url)
@@ -400,7 +401,24 @@ observeEvent(input$saveReference, {
                             content = 'Der Referenzwert wurde gespeichert')
                 writeLog('Referenzwert wurde gespeichert')
         }
-        
+})
+
+
+observeEvent(input$referenceValue, {
+        if(is.na(input$referenceValue)){
+                app <- currApp()
+                url <- itemsUrl(app[['url']], paste0(app[['app_key']],
+                                                     '.reference'))
+                refData <- readItems(app, url)
+                if(nrow(refData) == 1){
+                        updateDateInput(session,
+                                        'referenceDate',
+                                        value = refData$date)
+                        updateTextInput(session,
+                                        'referenceValue',
+                                        value = refData$value)       
+                }
+        }
 })
 
 observeEvent(input$mailerReceiver, {
@@ -412,3 +430,21 @@ observeEvent(input$mailerReceiver, {
                             content = 'Die monatliche Erinnerung per Email wurde eingerichtet.')
         }
 })
+
+output$icalReminder <- downloadHandler(
+        filename = 'oyd-bank.ics',
+        content = function(file) {
+                icsData <- paste('BEGIN:VCALENDAR',
+                                 'CALSCALE:GREGORIAN',
+                                 'VERSION:2.0',
+                                 'BEGIN:VEVENT',
+                                 'SEQUENCE:0',
+                                 'SUMMARY:OwnYourData - Kontoauszug importieren',
+                                 paste0('DTSTART;VALUE=DATE:', format(seq(Sys.Date(), length=2, by='1 month')[2],"%Y%m"),'01'),
+                                 'RRULE:FREQ=MONTHLY;INTERVAL=1;BYMONTHDAY=1',
+                                 'END:VEVENT',
+                                 'END:VCALENDAR',
+                                 sep="\n")
+                writeChar(icsData, file)
+        }
+)

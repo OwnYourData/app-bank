@@ -51,7 +51,7 @@ appSource <- function(){
                                tabPanel('Referenzwert festlegen',
                                         helpText('Kontobewegungen beschreiben Eingänge oder Ausgaben von einem Konto. Durch die Angabe eines Referenzwertes kann daraus der Kontostand zu anderen Zeiten berechnet werden.'),
                                         dateInput('referenceDate', label = 'Datum des Referenzwerts:'),
-                                        numericInput('referenceValue', label = 'Referenzwert:', value=0),
+                                        numericInput('referenceValue', label = 'Referenzwert:', value=NA),
                                         actionButton('saveReference', 'Referenzwert speichern', icon('save'))
                                ),
                                tabPanel('Erinnerungsfunktionen',
@@ -66,7 +66,7 @@ appSource <- function(){
                                                         br()
                                                 ),
                                                 tags$li(
-                                                        actionButton('icalReminder', 'Erinnerung im Kalender speichern', icon('calendar')),
+                                                        downloadButton('icalReminder', 'Erinnerung im Kalender speichern'),
                                                         helpText('Wenn du auf diese Schaltfläche klickst, wird eine iCalender (.ics) Datei heruntergeladen. Öffne diese mit deinem Kalender und es wird eine Erinnerung am Montasanfang zum Hochladen des aktuellen Kontoauszugs angelegt.')
                                                 )
                                         )
