@@ -421,16 +421,18 @@ observeEvent(input$saveReference, {
 observeEvent(input$referenceValue, {
         if(is.na(input$referenceValue)){
                 app <- currApp()
-                url <- itemsUrl(app[['url']], paste0(app[['app_key']],
-                                                     '.reference'))
-                refData <- readItems(app, url)
-                if(nrow(refData) == 1){
-                        updateDateInput(session,
-                                        'referenceDate',
-                                        value = refData$date)
-                        updateTextInput(session,
-                                        'referenceValue',
-                                        value = refData$value)       
+                if(length(all.equal(app, logical(0)))>1){
+                        url <- itemsUrl(app[['url']], paste0(app[['app_key']],
+                                                             '.reference'))
+                        refData <- readItems(app, url)
+                        if(nrow(refData) == 1){
+                                updateDateInput(session,
+                                                'referenceDate',
+                                                value = refData$date)
+                                updateTextInput(session,
+                                                'referenceValue',
+                                                value = refData$value)       
+                        }
                 }
         }
 })
