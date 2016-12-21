@@ -27,7 +27,7 @@ appStruct <- list(
                 fieldWidths = c(150, 450)))
 
 # Version information
-currVersion <- "0.5.2"
+currVersion <- "0.5.3"
 verHistory <- data.frame(rbind(
         c(version = "0.5.3",
           text    = "Verwendung von Listennamen in neuem Datentresor"),
