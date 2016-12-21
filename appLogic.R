@@ -401,7 +401,6 @@ observeEvent(input$saveReference, {
                 data <- list(date=as.character(input$referenceDate),
                              value=input$referenceValue)
                 refData <- readItems(app, url)
-                save(app, url, rv, data, refData, file='tmpRef.RData')
                 if(nrow(refData) > 0){
                         retVal <- updateItem(app, url, data, refData$id)
                         createAlert(session, 'taskInfo', 'successReference',
