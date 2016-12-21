@@ -292,6 +292,7 @@ writeLog <- function(logText){
                 repoUrl <- itemsUrl(app[['url']], 
                                     appRepos[['Verlauf']])
                 dataItem <- list(
+                        `_oydRepoName` = 'Protokoll',
                         date = as.character(Sys.time()),
                         description = logText)
                 writeItem(app, repoUrl, dataItem)

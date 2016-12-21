@@ -134,6 +134,7 @@ observeEvent(input$bankImport, {
                                                                      createPiaData[i, appFields],
                                                                      appFieldTypes)
                                                              dataItem$descriptionOrig <- dataItem$description
+                                                             dataItem$`_oydRepoName` <- "Kontodaten"
                                                              writeItem(app, url, dataItem)
                                                              setProgress(value=cnt,
                                                                          detail=paste0(cnt, '/', recCnt,
@@ -393,27 +394,30 @@ observeEvent(input$bankInstitute, {
 
 observeEvent(input$saveReference, {
         app <- currApp()
-        url <- itemsUrl(app[['url']], paste0(app[['app_key']],
-                                             '.reference'))
-        rv <- input$referenceValue
-        data <- list(date=as.character(input$referenceDate),
-                     value=input$referenceValue)
-        refData <- readItems(app, url)
-        if(nrow(refData) > 0){
-                retVal <- updateItem(app, url, data, refData$id)
-                createAlert(session, 'taskInfo', 'successReference',
-                            style = 'success', append = TRUE,
-                            title = 'Referenzwert festlegen',
-                            content = 'Der Referenzwert wurde aktualisiert.')
-                writeLog('Referenzwert wurde aktualisiert')
-                
-        } else {
-                retVal <- writeItem(app, url, data)
-                createAlert(session, 'taskInfo', 'successReference',
-                            style = 'success', append = TRUE,
-                            title = 'Referenzwert festlegen',
-                            content = 'Der Referenzwert wurde gespeichert')
-                writeLog('Referenzwert wurde gespeichert')
+        if(length(all.equal(app, logical(0)))>1){
+                url <- itemsUrl(app[['url']], paste0(app[['app_key']],
+                                                     '.reference'))
+                rv <- input$referenceValue
+                data <- list(date=as.character(input$referenceDate),
+                             value=input$referenceValue)
+                refData <- readItems(app, url)
+                save(app, url, rv, data, refData, file='tmpRef.RData')
+                if(nrow(refData) > 0){
+                        retVal <- updateItem(app, url, data, refData$id)
+                        createAlert(session, 'taskInfo', 'successReference',
+                                    style = 'success', append = TRUE,
+                                    title = 'Referenzwert festlegen',
+                                    content = 'Der Referenzwert wurde aktualisiert.')
+                        writeLog('Referenzwert wurde aktualisiert')
+                        
+                } else {
+                        retVal <- writeItem(app, url, data)
+                        createAlert(session, 'taskInfo', 'successReference',
+                                    style = 'success', append = TRUE,
+                                    title = 'Referenzwert festlegen',
+                                    content = 'Der Referenzwert wurde gespeichert')
+                        writeLog('Referenzwert wurde gespeichert')
+                }
         }
 })
 

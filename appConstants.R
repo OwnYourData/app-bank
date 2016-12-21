@@ -29,6 +29,8 @@ appStruct <- list(
 # Version information
 currVersion <- "0.5.2"
 verHistory <- data.frame(rbind(
+        c(version = "0.5.3",
+          text    = "Verwendung von Listennamen in neuem Datentresor"),
         c(version = "0.5.2",
           text    = "Erinnerung zum Hochladen des Kontoauszugs durch Kalendereintrag"),
         c(version = "0.5.1",
