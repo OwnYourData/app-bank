@@ -12,7 +12,7 @@ uiStart <- function(){
                                            style = "primary"),
                            bsCollapsePanel("Datentresor (Schritt 2 von 4)",
                                            value="PIA",
-                                           "Trage hier die Verbindungdaten zu deinem Datentresor und den darin gespeicherten Daten ein. Du findest diese Informationen im Datentresor im Menü 'Entitäten' unter 'Plugin'; gehe dort zur aktuellen App und klicke zum Anzeigen der Informationen auf 'Bearbeiten'.",
+                                           "Trage hier die Verbindungdaten zu deinem Datentresor und den darin gespeicherten Daten ein. Du findest diese Informationen im Datentresor bei jeder App unter 'Details'.",
                                            br(),br(),
                                            fluidRow(
                                                    column(6,

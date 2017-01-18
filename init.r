@@ -35,7 +35,15 @@ install_if_missing = function(p) {
 invisible(sapply(my_packages, install_if_missing))
 
 library(devtools)
-install_github("trestletech/shinyStore")
-install_github('rstudio/DT')
-install_github('hadley/scales')
-install_github('ropensci/plotly')
+if ('shinyStore' %in% rownames(installed.packages()) == FALSE) {
+        install_github('trestletech/shinyStore')
+}
+if ('DT' %in% rownames(installed.packages()) == FALSE) {
+        install_github('rstudio/DT')
+}
+if ('scales' %in% rownames(installed.packages()) == FALSE) {
+        install_github('hadley/scales')
+}
+if ('plotly' %in% rownames(installed.packages()) == FALSE) {
+        install_github('ropensci/plotly')
+}

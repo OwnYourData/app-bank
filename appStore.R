@@ -14,7 +14,7 @@ appStore <- function(){
                        conditionalPanel(
                                condition = "output.dataSheetDirty != ''",
                                tagList(actionButton('saveSheet', 
-                                                    'Daten in PIA speichern', 
+                                                    'Änderungen im Datentresor speichern', 
                                                     icon=icon('save')),
                                        br(),br())),
                        downloadButton('exportCSV', 'CSV Export')

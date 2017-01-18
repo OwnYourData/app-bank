@@ -73,14 +73,14 @@ r2d <- function(response){
                                                         data.frame()
                                                 } else {
                                                         # convert list to data.frame
-                                                        do.call(rbind, 
+                                                        do.call(bind_rows, 
                                                                 lapply(retVal, 
-                                                                       data.frame))
+                                                                       function(x) data.frame(x, stringsAsFactors = FALSE)))
                                                 }
                                         } else {
-                                                do.call(rbind, 
+                                                do.call(bind_rows, 
                                                         lapply(retVal, 
-                                                               data.frame))
+                                                               function(x) data.frame(x, stringsAsFactors = FALSE)))
                                         }
                                 }
                         }
@@ -172,6 +172,13 @@ deleteItem <- function(app, repo_url, id){
                              add_headers(headers)),
                 error = function(e) { return(NA) })
         response
+}
+
+# delete all items in a repo
+deleteRepo <- function(app, repo_url){
+        allItems <- readItems(app, repo_url)
+        lapply(allItems$id, 
+               function(x) deleteItem(app, repo_url, x))
 }
 
 # other helper functions ==================================

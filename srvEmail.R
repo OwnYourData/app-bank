@@ -1,5 +1,65 @@
 # functions for sending email reminders
-# last update:2016-07-28
+# last update: 2016-12-28
+
+writeSchedulerEmail <- function(app, email, content, time, response_structure){
+        if(missing(response_structure)) {
+                parameters <- list(address = email,
+                                   content = content,
+                                   encrypt = 'false')
+                config <- list(app            = app[['app_key']],
+                               time           = time,
+                               task           = 'email',
+                               parameters     = parameters,
+                               '_oydRepoName' = 'Scheduler')
+        } else {
+                parameters <- list(address            = email,
+                                   content            = content,
+                                   response_structure = response_structure,
+                                   repo_url           = app[['url']],
+                                   repo_key           = app[['app_key']],
+                                   repo_secret        = app[['app_secret']],
+                                   encrypt            = 'false')
+                config <- list(app            = app[['app_key']],
+                               time           = time,
+                               task           = 'email',
+                               email_response = TRUE,
+                               parameters     = parameters,
+                               '_oydRepoName' = 'Scheduler')
+        }
+        writeItem(app,
+                  itemsUrl(app[['url']], schedulerKey),
+                  config)
+}
+
+updateSchedulerEmail <- function(app, email, content, time, id, response_structure){
+        if(missing(response_structure)) {
+                parameters <- list(address = email,
+                                   content = content,
+                                   encrypt = 'false')
+                config <- list(app            = app[['app_key']],
+                               time           = time,
+                               task           = 'email',
+                               parameters     = parameters)
+        } else {
+                parameters <- list(address            = email,
+                                   content            = content,
+                                   response_structure = response_structure,
+                                   pia_url            = app[['url']],
+                                   app_key            = app[['app_key']],
+                                   app_secret         = app[['app_secret']],
+                                   encrypt            = 'false')
+                config <- list(app            = app[['app_key']],
+                               time           = time,
+                               task           = 'email',
+                               email_response = TRUE,
+                               parameters     = parameters)
+        }
+        updateItem(app, 
+                   itemsUrl(app[['url']], schedulerKey), 
+                   config,
+                   id)
+}
+
 
 getLocalEmailConfig <- reactive({
         validEmailConfig <- FALSE
@@ -13,24 +73,16 @@ getLocalEmailConfig <- reactive({
            (nchar(pwd) > 0)) {
                 validEmailConfig <- TRUE
         }
-        c('valid'=validEmailConfig,
-          'server'=server,
-          'port'=port,
-          'user'=user,
-          'pwd'=pwd)
+        c('valid'  = validEmailConfig,
+          'server' = server,
+          'port'   = port,
+          'user'   = user,
+          'pwd'    = pwd)
 })
-
-schedulerKey <- function(){
-        'eu.ownyourdata.scheduler'        
-}
-
-schedulerEmailConfigKey <- function(){
-        'eu.ownyourdata.scheduler.email_config'
-}
 
 getPiaEmailConfig <- function(app){
         url <- itemsUrl(app[['url']],
-                        schedulerEmailConfigKey())
+                        schedulerEmailConfigKey)
         retVal <- readItems(app, url)
         if(length(retVal) == 0 |
            nrow(retVal) == 0) {
@@ -40,154 +92,21 @@ getPiaEmailConfig <- function(app){
         }
 }
 
-# fix me !!!
-getPiaSchedulerEmail <- function(repo) {
+getPiaSchedulerEmail <- function(app) {
         vector()
-        # url <- itemsUrl(repo[['url']], 
-        #                 schedulerKey())
-        # retVal <- readItems(repo, url)
-        # if(nrow(retVal) == 0) {
-        #         vector()
-        # } else {
-        #         retVal <- retVal[retVal$repo == repo[['app_key']] & 
-        #                                  retVal$task == 'email', ]
-        #         if(nrow(retVal) > 0) {
-        #                 c(id=retVal$id,
-        #                   email=retVal$parameters$address)
-        #         } else {
-        #                 vector()
-        #         }
-        # }
-}
-
-emailConfigStatus <- function(app){
-        localMailConfig <- getLocalEmailConfig()
-        piaMailConfig <- getPiaEmailConfig(app)
-        if (localMailConfig[['valid']]) {
-                # is there already a config in PIA?
-                if (length(piaMailConfig) > 0) {
-                        # is it different?
-                        if((localMailConfig[['server']] == piaMailConfig[['server']]) &
-                           (localMailConfig[['port']] == piaMailConfig[['port']]) &
-                           (localMailConfig[['user']] == piaMailConfig[['user']]) &
-                           (localMailConfig[['pwd']] == piaMailConfig[['pwd']])) {
-                                'config in sync'
-                        } else {
-                                updateEmailConfig(app, 
-                                                  localMailConfig, 
-                                                  piaMailConfig[['id']])
-                                'config updated'
-                        }
-                } else {
-                        writeEmailConfig(app, localMailConfig)
-                        'config saved'
-                }
+        url <- itemsUrl(app[['url']],
+                        schedulerKey)
+        retVal <- readItems(app, url)
+        if(nrow(retVal) == 0) {
+                vector()
         } else {
-                # is there already a config in PIA?
-                if (length(piaMailConfig) > 0) {
-                        setEmailConfig(session, piaMailConfig)
-                        'config loaded' # Mailkonfiguration von PIA gelesen
+                retVal <- retVal[retVal$app == app[['app_key']] &
+                                         retVal$task == 'email', ]
+                if(nrow(retVal) > 0) {
+                        c(id=retVal$id,
+                          email=retVal$parameters$address)
                 } else {
-                        'not configured' # keine Mailkonfiguration vorhanden
+                        vector()
                 }
         }
 }
-
-emailReminderStatus <- reactive({
-        app <- currApp()
-        if(length(app) > 0){
-                piaMailConfig <- getPiaEmailConfig(app)
-                piaSchedulerEmail <- getPiaSchedulerEmail(app)
-                piaEmail <- ''
-                piaEmailId <- NA
-                if (length(piaMailConfig) == 0) {
-                        'no mail config'
-                } else {
-                        if (length(piaSchedulerEmail) > 0) {
-                                piaEmail <- piaSchedulerEmail[['email']]
-                                piaEmailId <-  piaSchedulerEmail[['id']]
-                        }
-                        localEmail <- as.character(input$email)
-                        if(validEmail(localEmail)) {
-                                if (localEmail == piaEmail) {
-                                        'email in sync'
-                                } else {
-                                        goal_fields <- list(
-                                                date='Date.now',
-                                                value='line_1'
-                                        )
-                                        goal_structure <- list(
-                                                app=repo_app,
-                                                fields=goal_fields
-                                        )
-                                        response_structure <- list(
-                                                goal_structure
-                                        )
-                                        content <- 'text'
-                                        timePattern <- '0 7 * * *'
-                                        if (piaEmail == '') {
-                                                writeSchedulerEmail(
-                                                        app,
-                                                        localEmail,
-                                                        content,
-                                                        timePattern,
-                                                        response_structure)
-                                                'email saved'
-                                        } else {
-                                                updateSchedulerEmail(
-                                                        app,
-                                                        localEmail,
-                                                        content,
-                                                        timePattern,
-                                                        response_structure,
-                                                        piaEmailId)
-                                                'email updated'
-                                        }
-                                }
-                        } else {
-                                if (nchar(localEmail) == 0) {
-                                        if (piaEmail == '') {
-                                                'missing email'
-                                        } else {
-                                                setSchedulerEmail(session, piaEmail)
-                                                'email loaded'
-                                        }
-                                } else {
-                                        'invalid email'
-                                }
-                        }
-                }
-        } else {
-                'no Pia'
-        }
-        
-})
-
-output$mail_config <- renderText({
-        app <- currApp()
-        if(length(app) > 0){
-                retVal <- emailConfigStatus(app)
-                switch(retVal,
-                       'config in sync' = 'Benachrichtigungen via Email sind eingerichtet',
-                       'not configured' = 'Benachrichtigungen via Email sind noch nicht konfiguiert',
-                       'config saved'   = 'Emailkonfiguration in PIA gespeichert',
-                       'config updated' = 'Emailkonfiguration in PIA aktualisiert',
-                       'config loaded'  = 'Emailkonfiguration aus PIA geladen')
-        } else {
-                'keine Verbindung zu PIA'
-        }
-})
-
-output$email_status <- renderText({
-        retVal <- emailReminderStatus()
-        paste('<strong>Status:</strong>',
-              switch(retVal,
-                     'no Pia'         = 'keine Verbindung zu PIA',
-                     'no mail config' = 'Emailkonfiguration noch nicht vorhanden',
-                     'missing email'  = 'fehlende Emailadresse',
-                     'invalid email'  = 'ungültige Emailadresse',
-                     'email loaded'   = 'Emailadresse aus PIA geladen',
-                     'email in sync'  = 'periodische Email-Benachrichtigungen werden versandt',
-                     'email saved'    = 'Emailadresse in PIA gespeichert',
-                     'email updated'  = 'Emailadresse in PIA aktualisiert'))
-})

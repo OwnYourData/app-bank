@@ -3,11 +3,13 @@
 
 source('srvDateselect.R', local=TRUE)
 source('srvEmail.R', local=TRUE)
+source('srvScheduler.R', local=TRUE)
 
 source('appLogicBankImport.R', local=TRUE)
 source('appLogicChart.R', local = TRUE)
 source('appLogicAnalysis.R', local = TRUE)
 
+# any record manipulations before storing a record
 appData <- function(data){
         data$descriptionOrig <- data$description
         data
@@ -27,20 +29,6 @@ repoData <- function(repo){
         }
         data
 }
-
-
-currData <- reactive({
-        input$bankImport
-        app <- currApp()
-        if(length(app) > 0) {
-                url <- itemsUrl(app[['url']], 
-                                paste0(app[['app_key']]))
-                piaData <- readItems(app, url)
-        } else {
-                piaData <- data.frame()
-        }
-        piaData
-})
 
 output$bankPlot <- renderPlotly({
         data <- currData()
@@ -134,7 +122,7 @@ observeEvent(input$bankImport, {
                                                                      createPiaData[i, appFields],
                                                                      appFieldTypes)
                                                              dataItem$descriptionOrig <- dataItem$description
-                                                             dataItem$`_oydRepoName` <- "Kontodaten"
+                                                             dataItem$`_oydRepoName` <- 'Kontodaten'
                                                              writeItem(app, url, dataItem)
                                                              setProgress(value=cnt,
                                                                          detail=paste0(cnt, '/', recCnt,
@@ -400,6 +388,7 @@ observeEvent(input$saveReference, {
                 rv <- input$referenceValue
                 data <- list(date=as.character(input$referenceDate),
                              value=input$referenceValue)
+                data$`_oydRepoName` <- 'Referenzwert'
                 refData <- readItems(app, url)
                 if(nrow(refData) > 0){
                         retVal <- updateItem(app, url, data, refData$id)
@@ -443,10 +432,31 @@ observeEvent(input$referenceValue, {
 observeEvent(input$mailerReceiver, {
         email <- input$mailerReceiver
         if(validEmail(email)){
-                createAlert(session, 'taskInfo', 'successEmail',
-                            style = 'success', append = TRUE,
-                            title = 'Erinnerungsemail konfigurieren',
-                            content = 'Die monatliche Erinnerung per Email wurde eingerichtet.')
+                app <- currApp()
+                schedulerEmail <- getPiaSchedulerEmail(app)
+                if(length(schedulerEmail) == 0) {
+                        writeSchedulerEmail(
+                                app,
+                                email,
+                                'upload bank csv',
+                                '0 9 1 * *')
+                        createAlert(session, 'taskInfo', 'successEmail',
+                                    style = 'success', append = TRUE,
+                                    title = 'Erinnerungsemail konfigurieren',
+                                    content = 'Die monatliche Erinnerung per Email wurde eingerichtet.')
+                } else {
+                        updateSchedulerEmail(
+                                app,
+                                email,
+                                'upload bank csv',
+                                '0 9 1 * *',
+                                schedulerEmail[['id']]
+                        )
+                        createAlert(session, 'taskInfo', 'successEmail',
+                                    style = 'success', append = TRUE,
+                                    title = 'Erinnerungsemail konfigurieren',
+                                    content = 'Die monatliche Erinnerung per Email wurde aktualisiert')
+                }
         }
 })
 

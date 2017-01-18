@@ -1,5 +1,5 @@
 # global constants available to the app
-# last update:2016-10-29
+# last update:2016-12-28
 
 # constants required for every App
 appName <- 'bank'
