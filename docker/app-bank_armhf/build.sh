@@ -4,6 +4,7 @@ APP="app-bank_armhf"
 APP_NAME="kontoentwicklung"
 
 # read commandline options
+REFRESH=false
 BUILD_CLEAN=false
 DOCKER_UPDATE=false
 RUN_LOCAL=false
@@ -15,15 +16,36 @@ while [ $# -gt 0 ]; do
         --dockerhub*)
             DOCKER_UPDATE=true
             ;;
+        --refresh*)
+            REFRESH=true
+            ;;
         --run*)
             RUN_LOCAL=true
             ;;
         *)
             printf "unbekannte Option(en)\n"
-            exit 1
+            if [ "${BASH_SOURCE[0]}" != "${0}" ]; then
+                return 1
+            else
+                exit 1
+            fi
     esac
     shift
 done
+
+if $REFRESH; then
+    if [ "${BASH_SOURCE[0]}" != "${0}" ]; then
+        cd ~/docker
+        rm -rf $APP
+        svn checkout https://github.com/OwnYourData/$APP/trunk/docker/$APP
+        echo "refreshed"
+        cd ~/docker/$APP
+        return
+    else
+        echo "you need to source the script for refresh"
+        exit
+    fi
+fi
 
 if $BUILD_CLEAN; then
     docker build --no-cache -t oydeu/$APP .
