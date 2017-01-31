@@ -7,21 +7,32 @@ observe({
                        '1'={ updateDateRangeInput(session, 'dateRange',
                                                   start = as.Date(Sys.Date()-7),
                                                   end = as.Date(Sys.Date())) },
-                       '2'={ updateDateRangeInput(session, 'dateRange',
-                                                  start = as.Date(Sys.Date() - months(1)),
-                                                  end = as.Date(Sys.Date())) },
-                       '3'={ updateDateRangeInput(session, 'dateRange',
-                                                  start = as.Date(Sys.Date() - months(2)),
-                                                  end = as.Date(Sys.Date())) },
-                       '4'={ updateDateRangeInput(session, 'dateRange',
-                                                  start = as.Date(Sys.Date() - months(6)),
-                                                  end = as.Date(Sys.Date())) },
-                       '5'={ updateDateRangeInput(session, 'dateRange',
-                                                  start = as.Date(paste(year(Sys.Date()),'1','1',sep='-')),
-                                                  end = as.Date(paste(year(Sys.Date()),'12','31',sep='-'))) },
-                       '6'={ updateDateRangeInput(session, 'dateRange',
-                                                  start = as.Date(Sys.Date() - months(12)),
-                                                  end = as.Date(Sys.Date())) },
+                       '2'={ updateDateRangeInput(
+                               session, 'dateRange',
+                               start = seq(Sys.Date(),
+                                           length = 2,
+                                           by = paste0('-1 months'))[2],
+                               end = as.Date(Sys.Date())) },
+                       '3'={ updateDateRangeInput(
+                               session, 'dateRange',
+                               start = seq(Sys.Date(),
+                                           length = 2,
+                                           by = paste0('-2 months'))[2],
+                               end = as.Date(Sys.Date())) },
+                       '4'={ updateDateRangeInput(
+                               session, 'dateRange',
+                               start = seq(Sys.Date(),
+                                           length = 2,
+                                           by = paste0('-6 months'))[2],
+                               end = as.Date(Sys.Date())) },
+                       '5'={ updateDateRangeInput(
+                               session, 'dateRange',
+                               start = as.Date(paste(year(Sys.Date()),'1','1',sep='-')),
+                               end = as.Date(paste(year(Sys.Date()),'12','31',sep='-'))) },
+                       '6'={ updateDateRangeInput(
+                               session, 'dateRange',
+                               start = as.Date(Sys.Date() - months(12)),
+                               end = as.Date(Sys.Date())) },
                        '10'={ data <- currData()
                        myStart <- min(as.Date(data$date), na.rm=TRUE)
                        myEnd <- max(as.Date(data$date), na.rm=TRUE)
@@ -39,15 +50,21 @@ observeEvent(input$dateRange, {
            (myEnd == as.Date(Sys.Date()))) {
                 updateSelectInput(session, 'dateSelect', selected=1)
         } else {
-                if((myStart == as.Date(Sys.Date() - months(1))) & 
+                if((myStart == seq(Sys.Date(), 
+                                   length = 2, 
+                                   by = paste0('-1 months'))[2]) & 
                    (myEnd == as.Date(Sys.Date()))) {
                         updateSelectInput(session, 'dateSelect', selected=2)
                 } else {
-                        if((myStart == as.Date(Sys.Date() - months(2))) & 
+                        if((myStart == seq(Sys.Date(), 
+                                           length = 2, 
+                                           by = paste0('-2 months'))[2]) & 
                            (myEnd == as.Date(Sys.Date()))) {
                                 updateSelectInput(session, 'dateSelect', selected=3)
                         } else {
-                                if((myStart == as.Date(Sys.Date() - months(6))) & 
+                                if((myStart == seq(Sys.Date(), 
+                                                   length = 2, 
+                                                   by = paste0('-6 months'))[2]) & 
                                    (myEnd == as.Date(Sys.Date()))) {
                                         updateSelectInput(session, 'dateSelect', selected=4)
                                 } else {
@@ -55,7 +72,9 @@ observeEvent(input$dateRange, {
                                            (myEnd == as.Date(paste(year(Sys.Date()),'12','31',sep='-')))) {
                                                 updateSelectInput(session, 'dateSelect', selected=5)
                                         } else {
-                                                if((myStart == as.Date(Sys.Date() - months(12))) & 
+                                                if((myStart == seq(Sys.Date(), 
+                                                                   length = 2, 
+                                                                   by = paste0('-12 months'))[2]) & 
                                                    (myEnd == as.Date(Sys.Date()))) {
                                                         updateSelectInput(session, 'dateSelect', selected=6)
                                                 } else {
