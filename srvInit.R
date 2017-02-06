@@ -2,8 +2,6 @@
 # last update: 2016-10-29
 
 observe({
-        session$sendCustomMessage(type='setPiaUrl',
-                                  input$store$pia_url)
         urlParams <- parseQueryString(session$clientData$url_search)
         urlParamExist <- FALSE
         if(is.null(urlParams[['PIA_URL']])){
@@ -59,6 +57,7 @@ observe({
                                     app[['token']],
                                     '<br><br>'))
                 })
+                session$sendCustomMessage(type='setPiaUrl', piaUrl)
                 piaMailConfig <- getPiaEmailConfig(app)
                 if(!is.null(nrow(piaMailConfig))){
                         updateTextInput(session, 'modalMailerAddress', value=as.character(piaMailConfig$server))

@@ -437,21 +437,24 @@ observeEvent(input$mailerReceiver, {
                 if(length(schedulerEmail) == 0) {
                         writeSchedulerEmail(
                                 app,
+                                appTitle,
                                 email,
-                                'upload bank csv',
+                                'Download Kontoauszug',
+                                'Lade deinen aktuellen Kontoauszug herunter und speichere diesen in deinem Datentresor!',
                                 '0 9 1 * *')
                         createAlert(session, 'taskInfo', 'successEmail',
                                     style = 'success', append = TRUE,
                                     title = 'Erinnerungsemail konfigurieren',
                                     content = 'Die monatliche Erinnerung per Email wurde eingerichtet.')
                 } else {
-                        updateSchedulerEmail(
+                        writeSchedulerEmail(
                                 app,
+                                appTitle,
                                 email,
-                                'upload bank csv',
+                                'Download Kontoauszug',
+                                'Lade deinen aktuellen Kontoauszug herunter und speichere diesen in deinem Datentresor!',
                                 '0 9 1 * *',
-                                schedulerEmail[['id']]
-                        )
+                                id=schedulerEmail[['id']])
                         createAlert(session, 'taskInfo', 'successEmail',
                                     style = 'success', append = TRUE,
                                     title = 'Erinnerungsemail konfigurieren',

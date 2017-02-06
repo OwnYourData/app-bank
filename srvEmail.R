@@ -1,10 +1,20 @@
 # functions for sending email reminders
-# last update: 2016-12-28
+# last update: 2017-02-06
 
-writeSchedulerEmail <- function(app, email, content, time, response_structure){
+writeSchedulerEmail <- function(app, app_name, email, subject, content, time, response_structure, id){
+        port <- as.character(session$clientData$url_port)
+        app_url <- paste0(session$clientData$url_protocol, '//',
+                          session$clientData$url_hostname)
+        if(port != '80'){
+                app_url <- paste0(app_url, ':', port)
+        }
         if(missing(response_structure)) {
                 parameters <- list(address = email,
+                                   appName = app_name,
+                                   subject = subject,
                                    content = content,
+                                   appUrl  = app_url,
+                                   piaUrl  = app[['url']],
                                    encrypt = 'false')
                 config <- list(app            = app[['app_key']],
                                time           = time,
@@ -13,7 +23,11 @@ writeSchedulerEmail <- function(app, email, content, time, response_structure){
                                '_oydRepoName' = 'Scheduler')
         } else {
                 parameters <- list(address            = email,
+                                   appName            = app_name,
+                                   subject            = subject,
                                    content            = content,
+                                   appUrl             = app_url,
+                                   piaUrl             = app[['url']],
                                    response_structure = response_structure,
                                    repo_url           = app[['url']],
                                    repo_key           = app[['app_key']],
@@ -26,40 +40,17 @@ writeSchedulerEmail <- function(app, email, content, time, response_structure){
                                parameters     = parameters,
                                '_oydRepoName' = 'Scheduler')
         }
-        writeItem(app,
-                  itemsUrl(app[['url']], schedulerKey),
-                  config)
-}
-
-updateSchedulerEmail <- function(app, email, content, time, id, response_structure){
-        if(missing(response_structure)) {
-                parameters <- list(address = email,
-                                   content = content,
-                                   encrypt = 'false')
-                config <- list(app            = app[['app_key']],
-                               time           = time,
-                               task           = 'email',
-                               parameters     = parameters)
+        if(missing(id)) {
+                writeItem(app,
+                          itemsUrl(app[['url']], schedulerKey),
+                          config)
         } else {
-                parameters <- list(address            = email,
-                                   content            = content,
-                                   response_structure = response_structure,
-                                   pia_url            = app[['url']],
-                                   app_key            = app[['app_key']],
-                                   app_secret         = app[['app_secret']],
-                                   encrypt            = 'false')
-                config <- list(app            = app[['app_key']],
-                               time           = time,
-                               task           = 'email',
-                               email_response = TRUE,
-                               parameters     = parameters)
+                updateItem(app, 
+                           itemsUrl(app[['url']], schedulerKey), 
+                           config,
+                           id)
         }
-        updateItem(app, 
-                   itemsUrl(app[['url']], schedulerKey), 
-                   config,
-                   id)
 }
-
 
 getLocalEmailConfig <- reactive({
         validEmailConfig <- FALSE

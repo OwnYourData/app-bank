@@ -10,7 +10,7 @@ output$versionHistory <- renderText({
 output$hdrImageLinkDesktop <- renderUI({
         # fix for "Raspberry Navigation"
         updateNavbarPage(session, 'mainPage', selected = appName)
-        session$sendCustomMessage(type='finishInit', NA)
+        #session$sendCustomMessage(type='finishInit', NA)
         renderHdrImageLink()
 })
 
@@ -23,20 +23,31 @@ headerTitle <- function() {
                 if(nrow(infoRec) == 1){
                         infoRec$name
                 } else {
-                        "Neue PIA"                        
+                        "Mein Datentresor"                        
                 }
         } else {
-                "Neue PIA"
+                "Mein Datentresor"
         }
 }
 
 renderHdrImageLink <- function() {
-        tags$div(
-                tags$a(href=input$store$pia_url,
-                       tags$img(height='25px', style='margin-top:-5px',
-                                src=oydLogo)),
-                tags$a(href=input$store$pia_url, headerTitle())
-        )
+        app <- currApp()
+        if(length(app) > 0){
+                tags$div(
+                        tags$a(href=app[['url']],
+                               tags$img(height='25px', style='margin-top:-5px',
+                                        src=oydLogo)),
+                        tags$a(href=app[['url']], 
+                               headerTitle())
+                )
+        } else {
+                tags$div(
+                       tags$img(height='25px', 
+                                style='margin-top:-5px',
+                                src=oydLogo),
+                        headerTitle()
+                )
+        }
 }
 
 observeEvent(input$buttonVisual, {
