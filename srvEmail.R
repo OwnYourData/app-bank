@@ -14,7 +14,7 @@ writeSchedulerEmail <- function(app, app_name, email, subject, content, time, re
                                    subject = subject,
                                    content = content,
                                    appUrl  = app_url,
-                                   piaUrl  = app[['url']],
+                                   pia_url  = app[['url']],
                                    encrypt = 'false')
                 config <- list(app            = app[['app_key']],
                                time           = time,
@@ -27,11 +27,10 @@ writeSchedulerEmail <- function(app, app_name, email, subject, content, time, re
                                    subject            = subject,
                                    content            = content,
                                    appUrl             = app_url,
-                                   piaUrl             = app[['url']],
                                    response_structure = response_structure,
-                                   repo_url           = app[['url']],
-                                   repo_key           = app[['app_key']],
-                                   repo_secret        = app[['app_secret']],
+                                   pia_url           = app[['url']],
+                                   app_key           = app[['app_key']],
+                                   app_secret        = app[['app_secret']],
                                    encrypt            = 'false')
                 config <- list(app            = app[['app_key']],
                                time           = time,
@@ -84,18 +83,16 @@ getPiaEmailConfig <- function(app){
 }
 
 getPiaSchedulerEmail <- function(app) {
-        vector()
-        url <- itemsUrl(app[['url']],
-                        schedulerKey)
+        url <- itemsUrl(app[['url']], schedulerKey)
         retVal <- readItems(app, url)
         if(nrow(retVal) == 0) {
                 vector()
         } else {
                 retVal <- retVal[retVal$app == app[['app_key']] &
-                                         retVal$task == 'email', ]
+                                 retVal$task == 'email', ]
                 if(nrow(retVal) > 0) {
                         c(id=retVal$id,
-                          email=retVal$parameters$address)
+                          email=retVal$parameters.address)
                 } else {
                         vector()
                 }
