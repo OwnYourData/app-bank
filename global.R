@@ -3,7 +3,7 @@
 
 # Comments ================================================
 # - run locally
-#   runApp('~/cs/ownyourdata/apps/bank2', host='0.0.0.0', port=1235)
+#   runApp('~/oyd/bank', host='0.0.0.0', port=1235)
 # - copy files to Github
 #   cp -r *.R *.r app*.txt www docker github/app-bank/; cd github/app-bank;
 

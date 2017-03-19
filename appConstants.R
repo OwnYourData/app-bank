@@ -5,6 +5,8 @@
 appName <- 'bank'
 appTitle <- 'Kontoentwicklung'
 app_id <- 'eu.ownyourdata.bank'
+helpUrl <- 'https://www.ownyourdata.eu/apps/bank/'
+mobileUrl <- 'https://kontoentwicklung-mobil.datentresor.org'
 
 # definition of data structure
 currRepoSelect <- ''

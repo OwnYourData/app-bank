@@ -58,6 +58,12 @@ observe({
                                     '<br><br>'))
                 })
                 session$sendCustomMessage(type='setPiaUrl', piaUrl)
+                mobile_url <- paste0(
+                        mobileUrl, 
+                        '?PIA_URL=', piaUrl,
+                        '&APP_KEY=', appKey,
+                        '&APP_SECRET=', appSecret)
+                session$sendCustomMessage(type='setMobileUrl', mobile_url)
                 piaMailConfig <- getPiaEmailConfig(app)
                 if(!is.null(nrow(piaMailConfig))){
                         updateTextInput(session, 'modalMailerAddress', value=as.character(piaMailConfig$server))
