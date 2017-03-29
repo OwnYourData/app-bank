@@ -1,4 +1,4 @@
-# <img src="https://github.com/OwnYourData/app-bank/raw/master/www/app_logo.png" width="92"> Fitbit
+# <img src="https://github.com/OwnYourData/app-bank/raw/master/www/app_logo.png" width="92"> Kontoentwicklung
 Banken bieten oft nur eine begrenzte Anzahl an gespeicherten Buchungszeilen. Mit der Kontoentwicklungs-App erhältst du eine unbeschränkte Historie über alle Einnahmen und Ausgaben. Diese Historie kann sich auch über mehrere Konten erstrecken und dadurch die Vermögensentwicklung über die Zeit darstellen.
 
 Mehr Infos, Screenshots und Demo: https://www.ownyourdata.eu/apps/bank/    
